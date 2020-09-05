@@ -1,5 +1,4 @@
 import React from "react";
-
 import { connect } from "react-redux";
 import { Button } from "reactstrap";
 import { incrementWith } from "../actions";
