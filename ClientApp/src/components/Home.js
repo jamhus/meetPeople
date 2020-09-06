@@ -1,5 +1,6 @@
-import { connect } from "react-redux";
 import React, { useEffect } from "react";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
 import { incrementWith, getValues } from "../actions";
 
 import {
@@ -14,7 +15,7 @@ import {
 const Home = ({ count, values, onClick, getValues, loading }) => {
   useEffect(() => {
     getValues();
-  }, []);
+  }, [getValues]);
 
   const listOfValues = () => {
     return loading ? (
@@ -59,6 +60,20 @@ const Home = ({ count, values, onClick, getValues, loading }) => {
     </div>
   );
 };
+
+Home.propTypes = {
+  count: PropTypes.number,
+  values: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.number,
+      name: PropTypes.string,
+    })
+  ),
+  onClick: PropTypes.func,
+  getValues: PropTypes.func,
+  loading: PropTypes.bool,
+};
+
 const mapStateToProps = (state) => ({
   count: state.increment.count,
   values: state.values.values,
