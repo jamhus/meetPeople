@@ -1,8 +1,9 @@
 import React from "react";
-import { createStore } from "redux";
+import thunk from "redux-thunk";
 import { Route } from "react-router";
 import { Provider } from "react-redux";
-import { devToolsEnhancer } from "redux-devtools-extension";
+import { composeWithDevTools } from "redux-devtools-extension";
+import { createStore, applyMiddleware } from "redux";
 
 import rootReducer from "./reducers";
 import Home from "./components/Home";
@@ -10,7 +11,10 @@ import { Layout } from "./components/Layout";
 
 import "./custom.css";
 
-const store = createStore(rootReducer, devToolsEnhancer());
+const store = createStore(
+  rootReducer,
+  composeWithDevTools(applyMiddleware(thunk))
+);
 
 const App = () => {
   return (

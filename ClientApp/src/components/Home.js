@@ -1,9 +1,15 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import { Button } from "reactstrap";
-import { incrementWith } from "../actions";
+import { incrementWith, getValues } from "../actions";
 
-const Home = ({ count, onClick }) => {
+const Home = ({ count, values, onClick, getValues }) => {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    getValues();
+  }, []);
+
   return (
     <div>
       <h1>Hello, world!</h1>
@@ -25,9 +31,11 @@ const Home = ({ count, onClick }) => {
 };
 const mapStateToProps = (state) => ({
   count: state.increment.count,
+  values: state.values.values,
 });
 
 const mapDispatchToProps = (dispatch) => ({
   onClick: (inc) => dispatch(incrementWith(inc)),
+  getValues: () => dispatch(getValues()),
 });
 export default connect(mapStateToProps, mapDispatchToProps)(Home);
