@@ -4,8 +4,6 @@ asp.net core 3 web api and react 16 client with redux for demo
 
 built by Software developer Jamal Hussein
 
-api inspired by Neil Cummings
-
 https://github.com/jamhus/meetPeople
 
 # steps to get up and running :
