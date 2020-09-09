@@ -20,9 +20,8 @@ namespace meetPeople.Controllers
 
         public async Task<IActionResult> Register(UserForRegisterDto userForRegisterDto) 
         {
-            //validation phase yet to build
-
-            userForRegisterDto.Username = userForRegisterDto.Username.ToLower();
+           
+             userForRegisterDto.Username = userForRegisterDto.Username.ToLower();
 
             if(await _authRepo.UserExists(userForRegisterDto.Username)){
                 return BadRequest("username already exists");
@@ -36,6 +35,7 @@ namespace meetPeople.Controllers
             var createdUser = await _authRepo.Register(user, userForRegisterDto.Password);
             
             return StatusCode(201); //temporary solution
+           
         }
     }
 }
