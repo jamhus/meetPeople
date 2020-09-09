@@ -16,7 +16,7 @@ namespace meetPeople.Controllers
             _authRepo = authRepo;
         }
 
-        [HttpPost("Register")]
+        [HttpPost("register")]
 
         public async Task<IActionResult> Register(UserForRegisterDto userForRegisterDto) 
         {
