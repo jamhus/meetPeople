@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using meetPeople.Dtos;
 using meetPeople.Interfaces;
 using meetPeople.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -17,22 +18,22 @@ namespace meetPeople.Controllers
 
         [HttpPost("Register")]
 
-        public async Task<IActionResult> Register(string username, string password) 
+        public async Task<IActionResult> Register(UserForRegisterDto userForRegisterDto) 
         {
             //validation phase yet to build
 
-            username = username.ToLower();
+            userForRegisterDto.Username = userForRegisterDto.Username.ToLower();
 
-            if(await _authRepo.UserExists(username)){
+            if(await _authRepo.UserExists(userForRegisterDto.Username)){
                 return BadRequest("username already exists");
             }
 
             var user = new User 
             {
-                Username = username
+                Username = userForRegisterDto.Username
             };
 
-            var createdUser = await _authRepo.Register(user, password);
+            var createdUser = await _authRepo.Register(user, userForRegisterDto.Password);
             
             return StatusCode(201); //temporary solution
         }
