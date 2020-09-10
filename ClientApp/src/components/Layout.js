@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { Container } from "reactstrap";
-import { NavMenu } from "./NavMenu";
+import NavMenu from "./NavMenu";
 
 export const Layout = ({ children }) => (
   <div>

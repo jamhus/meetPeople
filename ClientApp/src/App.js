@@ -1,13 +1,16 @@
 import React from "react";
 import thunk from "redux-thunk";
-import { Route } from "react-router";
+import { Route, Switch } from "react-router";
 import { Provider } from "react-redux";
 import { composeWithDevTools } from "redux-devtools-extension";
 import { createStore, applyMiddleware } from "redux";
 
 import rootReducer from "./reducers";
-import Home from "./components/Home";
+import { Home } from "./components/Home";
+import Login from "./components/LoginPage";
 import { Layout } from "./components/Layout";
+import ValuesPage from "./components/ValuesPage";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 import "./custom.css";
 
@@ -20,7 +23,11 @@ const App = () => {
   return (
     <Provider store={store}>
       <Layout>
-        <Route exact path="/" component={Home} />
+        <Switch>
+          <Route exact path="/" component={Home} />
+          <Route path="/login" component={Login} />
+          <ProtectedRoute exact path="/values" component={ValuesPage} />
+        </Switch>
       </Layout>
     </Provider>
   );

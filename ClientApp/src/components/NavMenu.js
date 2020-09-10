@@ -1,21 +1,29 @@
 import React, { useState } from "react";
+import { connect } from "react-redux";
+import { Link } from "react-router-dom";
 import {
-  Collapse,
-  Container,
   Navbar,
-  NavbarBrand,
-  NavbarToggler,
   NavItem,
   NavLink,
+  Collapse,
+  Container,
+  NavbarBrand,
+  NavbarToggler,
 } from "reactstrap";
-import { Link } from "react-router-dom";
+
+import { setLogout } from "../actions/AuthenticationActions";
+
 import "./NavMenu.css";
 
-export const NavMenu = () => {
+const NavMenu = ({ isLogedIn, setLogout }) => {
   const [collapsed, setCollapsed] = useState(false);
 
   const toggleNavbar = () => {
     setCollapsed(!collapsed);
+  };
+
+  const handleLogout = () => {
+    setLogout();
   };
 
   return (
@@ -40,6 +48,35 @@ export const NavMenu = () => {
                   Home
                 </NavLink>
               </NavItem>
+
+              {isLogedIn && (
+                <NavItem>
+                  <NavLink tag={Link} className="text-dark" to="/values">
+                    Values
+                  </NavLink>
+                </NavItem>
+              )}
+
+              {!isLogedIn && (
+                <NavItem>
+                  <NavLink tag={Link} className="text-dark" to="/login">
+                    Login
+                  </NavLink>
+                </NavItem>
+              )}
+
+              {isLogedIn && (
+                <NavItem>
+                  <NavLink
+                    tag={Link}
+                    className="text-dark"
+                    onClick={handleLogout}
+                    to="/"
+                  >
+                    Logout
+                  </NavLink>
+                </NavItem>
+              )}
             </ul>
           </Collapse>
         </Container>
@@ -47,3 +84,13 @@ export const NavMenu = () => {
     </header>
   );
 };
+
+const mapStateToProps = (state) => ({
+  isLogedIn: state.authentication.user.isLogedIn,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  setLogout: () => dispatch(setLogout()),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(NavMenu);
