@@ -6,12 +6,14 @@ using System.Threading.Tasks;
 using meetPeople.Dtos;
 using meetPeople.Interfaces;
 using meetPeople.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
 namespace meetPeople.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class AuthenticationController : ControllerBase
@@ -24,6 +26,7 @@ namespace meetPeople.Controllers
             _authRepo = authRepo;
         }
 
+        [AllowAnonymous]
         [HttpPost("register")]  
         public async Task<IActionResult> Register(UserForRegisterDto userForRegisterDto)
         {
@@ -45,7 +48,8 @@ namespace meetPeople.Controllers
             return StatusCode(201); //temporary solution
 
         }
-
+        
+        [AllowAnonymous]
         [HttpPost("login")]
         public async Task<IActionResult> Login(UserForLoginDto userForLoginDto)
         {
