@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { connect } from "react-redux";
-import { Link } from "react-router-dom";
+import { NavLink as RouterNavLink } from "react-router-dom";
 import {
   Navbar,
   NavItem,
@@ -35,7 +35,7 @@ const NavMenu = ({ isLoggedIn, setLogout }) => {
         light
       >
         <Container>
-          <NavbarBrand tag={Link} to="/">
+          <NavbarBrand tag={RouterNavLink} to="/">
             demochat
           </NavbarBrand>
           <NavbarToggler onClick={toggleNavbar} className="mr-2" />
@@ -46,14 +46,18 @@ const NavMenu = ({ isLoggedIn, setLogout }) => {
           >
             <ul className="navbar-nav flex-grow">
               <NavItem>
-                <NavLink tag={Link} className="text-dark" to="/">
+                <NavLink tag={RouterNavLink} className="text-dark" to="/">
                   Home
                 </NavLink>
               </NavItem>
 
               {isLoggedIn && (
                 <NavItem>
-                  <NavLink tag={Link} className="text-dark" to="/values">
+                  <NavLink
+                    tag={RouterNavLink}
+                    className="text-dark"
+                    to="/values"
+                  >
                     Values
                   </NavLink>
                 </NavItem>
@@ -61,7 +65,11 @@ const NavMenu = ({ isLoggedIn, setLogout }) => {
 
               {!isLoggedIn && (
                 <NavItem>
-                  <NavLink tag={Link} className="text-dark" to="/login">
+                  <NavLink
+                    tag={RouterNavLink}
+                    className="text-dark"
+                    to="/login"
+                  >
                     Login
                   </NavLink>
                 </NavItem>
@@ -70,7 +78,7 @@ const NavMenu = ({ isLoggedIn, setLogout }) => {
               {isLoggedIn && (
                 <NavItem>
                   <NavLink
-                    tag={Link}
+                    tag={RouterNavLink}
                     className="text-dark"
                     onClick={handleLogout}
                     to="/"
