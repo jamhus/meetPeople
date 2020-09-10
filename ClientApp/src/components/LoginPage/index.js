@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { setUser } from "./../../actions";
+import { handleLogin } from "./../../actions";
 
 import {
   Col,
@@ -14,15 +14,20 @@ import {
   FormGroup,
 } from "reactstrap";
 
-const Login = ({ setUser, loading, history }) => {
+const Login = ({ handleLogin, loading, history, isLoggedIn }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
+  useEffect(() => {
+    if (isLoggedIn) {
+      const path = history.location.state
+        ? history.location.state.pathname
+        : "/";
+      history.push(path);
+    }
+  }, [isLoggedIn, history]);
   const handleSubmit = () => {
-    setUser({ username, password });
-
-    const path = history.location.state ? history.location.state.pathname : "/";
-    history.push(path);
+    handleLogin(username, password);
   };
   return (
     <Row>
@@ -61,8 +66,9 @@ const Login = ({ setUser, loading, history }) => {
 };
 
 Login.propTypes = {
-  setUser: PropTypes.func,
+  Login: PropTypes.func,
   loading: PropTypes.bool,
+  isLoggedIn: PropTypes.bool,
   history: PropTypes.shape({
     location: PropTypes.shape({
       state: PropTypes.shape({
@@ -74,9 +80,11 @@ Login.propTypes = {
 
 const mapStateToProps = (state) => ({
   loading: state.loading.loading,
+  isLoggedIn: state.authentication.user.isLoggedIn,
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  setUser: (user) => dispatch(setUser(user)),
+  handleLogin: (username, password) =>
+    dispatch(handleLogin(username, password)),
 });
 export default connect(mapStateToProps, mapDispatchToProps)(Login);

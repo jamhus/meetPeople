@@ -10,12 +10,13 @@ import {
   NavbarBrand,
   NavbarToggler,
 } from "reactstrap";
+import Cookies from "js-cookie";
 
 import { setLogout } from "../actions/AuthenticationActions";
 
 import "./NavMenu.css";
 
-const NavMenu = ({ isLogedIn, setLogout }) => {
+const NavMenu = ({ isLoggedIn, setLogout }) => {
   const [collapsed, setCollapsed] = useState(false);
 
   const toggleNavbar = () => {
@@ -23,6 +24,7 @@ const NavMenu = ({ isLogedIn, setLogout }) => {
   };
 
   const handleLogout = () => {
+    Cookies.remove("token");
     setLogout();
   };
 
@@ -49,7 +51,7 @@ const NavMenu = ({ isLogedIn, setLogout }) => {
                 </NavLink>
               </NavItem>
 
-              {isLogedIn && (
+              {isLoggedIn && (
                 <NavItem>
                   <NavLink tag={Link} className="text-dark" to="/values">
                     Values
@@ -57,7 +59,7 @@ const NavMenu = ({ isLogedIn, setLogout }) => {
                 </NavItem>
               )}
 
-              {!isLogedIn && (
+              {!isLoggedIn && (
                 <NavItem>
                   <NavLink tag={Link} className="text-dark" to="/login">
                     Login
@@ -65,7 +67,7 @@ const NavMenu = ({ isLogedIn, setLogout }) => {
                 </NavItem>
               )}
 
-              {isLogedIn && (
+              {isLoggedIn && (
                 <NavItem>
                   <NavLink
                     tag={Link}
@@ -86,7 +88,7 @@ const NavMenu = ({ isLogedIn, setLogout }) => {
 };
 
 const mapStateToProps = (state) => ({
-  isLogedIn: state.authentication.user.isLogedIn,
+  isLoggedIn: state.authentication.user.isLoggedIn,
 });
 
 const mapDispatchToProps = (dispatch) => ({

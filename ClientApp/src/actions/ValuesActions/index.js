@@ -1,4 +1,5 @@
 import { toggleLoading } from "../LoadingActions";
+import Cookies from "js-cookie";
 
 export const fetchValues = (values) => ({
   type: VALUES_CONSTANTS.FETCH_VALUES,
@@ -12,8 +13,19 @@ export const VALUES_CONSTANTS = {
 
 export const getValues = () => async (dispatch) => {
   dispatch(toggleLoading(true));
+
+  var myHeaders = new Headers();
+  myHeaders.append("Authorization", `Bearer ${Cookies.get("token")}`);
+
+  var requestOptions = {
+    method: "GET",
+    headers: myHeaders,
+    redirect: "follow",
+  };
   try {
-    const data = await fetch("/api/values").then((res) => res.json());
+    const data = await fetch("/api/values", requestOptions).then((res) =>
+      res.json()
+    );
     dispatch(fetchValues(data));
   } catch (error) {
     console.log(error);

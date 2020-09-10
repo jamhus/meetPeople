@@ -7,7 +7,7 @@ const ProtectedRoute = ({ component: Component, ...rest }) => {
     <Route
       {...rest}
       render={(props) => {
-        if (rest.isLogedIn) {
+        if (rest.isLoggedIn) {
           return <Component {...props} />;
         } else
           return (
@@ -19,7 +19,7 @@ const ProtectedRoute = ({ component: Component, ...rest }) => {
 };
 
 const mapStateToProps = (state) => ({
-  isLogedIn: state.authentication.user.isLogedIn,
+  isLoggedIn: state.authentication.user.isLoggedIn,
 });
 
 export default connect(mapStateToProps, {})(ProtectedRoute);
