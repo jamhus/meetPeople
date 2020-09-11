@@ -60,16 +60,16 @@ const Home = ({ count, values, onClick, getValues, loading }) => {
 };
 
 Home.propTypes = {
-  count: PropTypes.number,
+  count: PropTypes.number.isRequired,
   values: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.number,
       name: PropTypes.string,
     })
-  ),
-  onClick: PropTypes.func,
-  getValues: PropTypes.func,
-  loading: PropTypes.bool,
+  ).isRequired,
+  onClick: PropTypes.func.isRequired,
+  getValues: PropTypes.func.isRequired,
+  loading: PropTypes.bool.isRequired,
 };
 
 const mapStateToProps = (state) => ({

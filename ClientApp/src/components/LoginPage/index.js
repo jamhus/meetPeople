@@ -70,15 +70,15 @@ const LoginPage = ({ handleLogin, loading, history, isLoggedIn }) => {
 };
 
 LoginPage.propTypes = {
-  Login: PropTypes.func,
-  loading: PropTypes.bool,
-  isLoggedIn: PropTypes.bool,
+  handleLogin: PropTypes.func.isRequired,
+  loading: PropTypes.bool.isRequired,
+  isLoggedIn: PropTypes.bool.isRequired,
   history: PropTypes.shape({
     location: PropTypes.shape({
       state: PropTypes.shape({
         pathname: PropTypes.string,
       }),
-    }),
+    }).isRequired,
   }),
 };
 

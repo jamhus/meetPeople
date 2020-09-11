@@ -97,16 +97,8 @@ const RegisterPage = ({ handleRegister, loading }) => {
 };
 
 RegisterPage.propTypes = {
-  loading: PropTypes.bool,
-  isLoggedIn: PropTypes.bool,
-  handleRegister: PropTypes.func,
-  history: PropTypes.shape({
-    location: PropTypes.shape({
-      state: PropTypes.shape({
-        pathname: PropTypes.string,
-      }),
-    }),
-  }),
+  loading: PropTypes.bool.isRequired,
+  handleRegister: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({

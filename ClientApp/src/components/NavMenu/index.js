@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { NavLink as RouterNavLink } from "react-router-dom";
 import {
@@ -93,6 +94,11 @@ const NavMenu = ({ isLoggedIn, setLogout }) => {
       </Navbar>
     </header>
   );
+};
+
+NavMenu.propTypes = {
+  isLoggedIn: PropTypes.bool.isRequired,
+  setLogout: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
