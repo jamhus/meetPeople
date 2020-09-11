@@ -1,14 +1,17 @@
-import React, { useEffect } from "react";
-import { connect } from "react-redux";
-import { Route, Switch } from "react-router";
-
 import Cookies from "js-cookie";
+import PropTypes from "prop-types";
 import jwt_decode from "jwt-decode";
-import { Home } from "./components/Home";
-import Login from "./components/LoginPage";
+import { connect } from "react-redux";
+import React, { useEffect } from "react";
+import { Route, Switch, Redirect } from "react-router";
+
 import { Layout } from "./components/Layout";
+import LoginPage from "./components/LoginPage";
+import { HomePage } from "./components/HomePage";
 import ValuesPage from "./components/ValuesPage";
+import RegisterPage from "./components/RegisterPage";
 import ProtectedRoute from "./components/ProtectedRoute";
+import { NotFoundPage } from "./components/NotFoundPage";
 
 import "./custom.css";
 import { setUser } from "./actions";
@@ -24,17 +27,24 @@ const App = ({ setUser }) => {
 
   useEffect(() => {
     readCookie();
-  }, [readCookie]);
+  });
 
   return (
     <Layout>
       <Switch>
-        <Route exact path="/" component={Home} />
-        <Route path="/login" component={Login} />
+        <Route exact path="/" component={HomePage} />
+        <Route path="/login" component={LoginPage} />
+        <Route path="/register" component={RegisterPage} />
         <ProtectedRoute exact path="/values" component={ValuesPage} />
+        <Route path="/404" component={NotFoundPage} />
+        <Redirect to="/404" />
       </Switch>
     </Layout>
   );
+};
+
+App.prototype = {
+  setUser: PropTypes.func,
 };
 
 const mapDispatchToProps = (dispatch) => ({

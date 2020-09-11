@@ -14,7 +14,7 @@ import {
   FormGroup,
 } from "reactstrap";
 
-const Login = ({ handleLogin, loading, history, isLoggedIn }) => {
+const LoginPage = ({ handleLogin, loading, history, isLoggedIn }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
@@ -26,9 +26,11 @@ const Login = ({ handleLogin, loading, history, isLoggedIn }) => {
       history.push(path);
     }
   }, [isLoggedIn, history]);
+
   const handleSubmit = () => {
     handleLogin(username, password);
   };
+
   return (
     <Row>
       <Col sm={12} md={{ size: 4, offset: 4 }}>
@@ -53,7 +55,9 @@ const Login = ({ handleLogin, loading, history, isLoggedIn }) => {
               onChange={(e) => setPassword(e.target.value)}
             />
           </FormGroup>
-          <Button onClick={handleSubmit}>Login</Button>
+          <Button className="btn btn-block btn-primary" onClick={handleSubmit}>
+            Login
+          </Button>
         </Form>
         {loading && (
           <Col xs="12" md={{ size: 3, offset: 5 }}>
@@ -65,7 +69,7 @@ const Login = ({ handleLogin, loading, history, isLoggedIn }) => {
   );
 };
 
-Login.propTypes = {
+LoginPage.propTypes = {
   Login: PropTypes.func,
   loading: PropTypes.bool,
   isLoggedIn: PropTypes.bool,
@@ -87,4 +91,4 @@ const mapDispatchToProps = (dispatch) => ({
   handleLogin: (username, password) =>
     dispatch(handleLogin(username, password)),
 });
-export default connect(mapStateToProps, mapDispatchToProps)(Login);
+export default connect(mapStateToProps, mapDispatchToProps)(LoginPage);

@@ -31,6 +31,30 @@ export const handleLogin = (username, password) => async (dispatch) => {
   dispatch(toggleLoading(false));
 };
 
+export const handleRegister = (username, password) => async (dispatch) => {
+  dispatch(toggleLoading(true));
+
+  let status;
+  try {
+    await fetch("/api/authentication/Register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        username: username,
+        password: password,
+      }),
+    }).then((res) => {
+      status = res.status;
+    });
+  } catch (error) {
+    console.log(error);
+  }
+  dispatch(toggleLoading(false));
+  return status;
+};
+
 export const setUser = (user) => ({
   type: AUTHENICATION_CONSTANTS.SET_USER,
   user,
