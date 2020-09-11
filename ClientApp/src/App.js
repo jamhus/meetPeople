@@ -9,9 +9,10 @@ import { Layout } from "./components/Layout";
 import LoginPage from "./components/LoginPage";
 import { HomePage } from "./components/HomePage";
 import ValuesPage from "./components/ValuesPage";
+import Toaster from "./components/common/Toaster";
 import RegisterPage from "./components/RegisterPage";
-import ProtectedRoute from "./components/ProtectedRoute";
-import { NotFoundPage } from "./components/NotFoundPage";
+import { NotFoundPage } from "./components/common/NotFoundPage";
+import ProtectedRoute from "./components/common/ProtectedRoute";
 
 import "./custom.css";
 import { setUser } from "./actions";
@@ -30,21 +31,24 @@ const App = ({ setUser }) => {
   });
 
   return (
-    <Layout>
-      <Switch>
-        <Route exact path="/" component={HomePage} />
-        <Route path="/login" component={LoginPage} />
-        <Route path="/register" component={RegisterPage} />
-        <ProtectedRoute exact path="/values" component={ValuesPage} />
-        <Route path="/404" component={NotFoundPage} />
-        <Redirect to="/404" />
-      </Switch>
-    </Layout>
+    <>
+      <Toaster />
+      <Layout>
+        <Switch>
+          <Route exact path="/" component={HomePage} />
+          <Route path="/login" component={LoginPage} />
+          <Route path="/register" component={RegisterPage} />
+          <ProtectedRoute exact path="/values" component={ValuesPage} />
+          <Route path="/404" component={NotFoundPage} />
+          <Redirect to="/404" />
+        </Switch>
+      </Layout>
+    </>
   );
 };
 
 App.prototype = {
-  setUser: PropTypes.func,
+  setUser: PropTypes.func.isRequired,
 };
 
 const mapDispatchToProps = (dispatch) => ({

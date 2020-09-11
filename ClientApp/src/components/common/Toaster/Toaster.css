@@ -1,0 +1,5 @@
+.toaster-wrapper {
+  z-index: 2;
+  right: 0;
+  width: 350px !important;
+}

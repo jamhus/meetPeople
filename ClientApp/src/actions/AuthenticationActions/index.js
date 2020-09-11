@@ -1,5 +1,10 @@
-import { toggleLoading } from "../LoadingActions";
+import {
+  openToaster,
+  closeToaster,
+  TOASTER_TYPE_CONSTANTS,
+} from "../ToasterActions";
 import Cookies from "js-cookie";
+import { toggleLoading } from "../LoadingActions";
 import jwt_decode from "jwt-decode";
 
 export const handleLogin = (username, password) => async (dispatch) => {
@@ -16,17 +21,42 @@ export const handleLogin = (username, password) => async (dispatch) => {
         password: password,
       }),
     })
-      .then((res) => res.json())
-      .then((token) => {
-        const claims = jwt_decode(token.token);
-        if (claims.unique_name) {
-          dispatch(setUser({ username: claims.unique_name }));
+      .then((res) => ({ obj: res.json(), status: res.status }))
+      .then((data) => {
+        if (data.status === 200) {
+          data.obj.then((userToken) => {
+            const claims = jwt_decode(userToken["token"]);
+            if (claims.unique_name) {
+              dispatch(setUser({ username: claims.unique_name }));
+            }
+            dispatch(toggleLoading(false));
+            Cookies.set("token", userToken, { expires: claims.exp });
+            dispatch(
+              openToaster(
+                "Login successed!",
+                `Welcome ${username}`,
+                TOASTER_TYPE_CONSTANTS.SUCCESS
+              )
+            );
+            setTimeout(() => {
+              dispatch(closeToaster());
+            }, 5000);
+          });
+        } else {
+          dispatch(
+            openToaster(
+              "Error while login",
+              "Username or password are not correct",
+              TOASTER_TYPE_CONSTANTS.DANGER
+            )
+          );
+          setTimeout(() => {
+            dispatch(closeToaster());
+          }, 5000);
         }
-        dispatch(toggleLoading(false));
-        Cookies.set("token", token.token, { expires: claims.exp });
       });
   } catch (error) {
-    console.log(error);
+    console.error({ error });
   }
   dispatch(toggleLoading(false));
 };
@@ -47,6 +77,29 @@ export const handleRegister = (username, password) => async (dispatch) => {
       }),
     }).then((res) => {
       status = res.status;
+      if (status === 201) {
+        dispatch(
+          openToaster(
+            "Registered successfully!",
+            "Your account has been registered!",
+            TOASTER_TYPE_CONSTANTS.SUCCESS
+          )
+        );
+        setTimeout(() => {
+          dispatch(closeToaster());
+        }, 5000);
+      } else {
+        dispatch(
+          openToaster(
+            "Registered Failed!",
+            "Something went wrong during registration!",
+            TOASTER_TYPE_CONSTANTS.DANGER
+          )
+        );
+        setTimeout(() => {
+          dispatch(closeToaster());
+        }, 5000);
+      }
     });
   } catch (error) {
     console.log(error);
