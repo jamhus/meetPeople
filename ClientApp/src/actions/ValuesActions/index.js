@@ -15,7 +15,8 @@ export const getValues = () => async (dispatch) => {
   dispatch(toggleLoading(true));
 
   var myHeaders = new Headers();
-  myHeaders.append("Authorization", `Bearer ${Cookies.get("token")}`);
+  const token = JSON.parse(Cookies.get("token"))["token"];
+  myHeaders.append("Authorization", `Bearer ${token}`);
 
   var requestOptions = {
     method: "GET",
