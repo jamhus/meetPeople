@@ -65,6 +65,7 @@ export const handleRegister = (username, password) => async (dispatch) => {
   dispatch(toggleLoading(true));
 
   let status;
+  let errorMessage = " ";
   try {
     await fetch("/api/authentication/Register", {
       method: "POST",
@@ -89,10 +90,35 @@ export const handleRegister = (username, password) => async (dispatch) => {
           dispatch(closeToaster());
         }, 5000);
       } else {
+        if (res.headers.get("Application-Error")) {
+          errorMessage = res.headers.get("Application-Error");
+
+          dispatch(
+            openToaster(
+              "Registered Failed!",
+              errorMessage,
+              TOASTER_TYPE_CONSTANTS.DANGER
+            )
+          );
+        }
+        res.json().then((data) => {
+          const errorList = Object.values(data.errors).map(
+            (errorArr) => errorArr[errorArr.length - 1]
+          );
+          errorList.map((err) => (errorMessage = errorMessage + " " + err));
+          dispatch(
+            openToaster(
+              "Registered Failed!",
+              errorMessage,
+              TOASTER_TYPE_CONSTANTS.DANGER
+            )
+          );
+        });
+
         dispatch(
           openToaster(
             "Registered Failed!",
-            "Something went wrong during registration!",
+            errorMessage,
             TOASTER_TYPE_CONSTANTS.DANGER
           )
         );

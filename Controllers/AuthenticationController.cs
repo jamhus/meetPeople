@@ -35,7 +35,7 @@ namespace meetPeople.Controllers
 
             if (await _authRepo.UserExists(userForRegisterDto.Username))
             {
-                return BadRequest("username already exists");
+                throw new Exception("Username is used");
             }
 
             var user = new User
