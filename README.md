@@ -10,5 +10,4 @@ https://github.com/jamhus/meetPeople
 
     * $ npm i into the ClientApp directory
     * $ dotnet build into the root directory
-    * $ dotnet ef database update into the root directory
     * $ dotnet run into the root directory
