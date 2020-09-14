@@ -42,6 +42,7 @@ namespace meetPeople
             });
 
             services.AddScoped<IAuthRepository,AuthRepository>();
+            services.AddScoped<IMeetPeopleRepository,MeetPeopleRepository>();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options => {
                 options.TokenValidationParameters = new TokenValidationParameters
