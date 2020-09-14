@@ -1,5 +1,6 @@
 using System.Net;
 using System.Text;
+using AutoMapper;
 using meetPeople.Data;
 using meetPeople.Helpers;
 using meetPeople.Interfaces;
@@ -44,8 +45,12 @@ namespace meetPeople
                 configuration.RootPath = "ClientApp/build";
             });
 
+            services.AddAutoMapper(typeof(MeetPeopleRepository).Assembly);
+
             services.AddScoped<IAuthRepository,AuthRepository>();
+
             services.AddScoped<IMeetPeopleRepository,MeetPeopleRepository>();
+            
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options => {
                 options.TokenValidationParameters = new TokenValidationParameters
