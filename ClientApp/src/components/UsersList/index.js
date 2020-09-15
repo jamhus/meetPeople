@@ -38,7 +38,7 @@ const UsersList = ({ users, loading, getUsers }) => {
 
   return (
     <>
-      <Row style={{ padding: ".5rem" }}>{listOfUsers()}</Row>
+      <Row className="mt-5">{listOfUsers()}</Row>
     </>
   );
 };
