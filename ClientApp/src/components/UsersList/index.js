@@ -3,7 +3,8 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { getUsers } from "../../actions";
 
-import { Row, Col, Spinner, ListGroup, ListGroupItem } from "reactstrap";
+import { Row, Col, Spinner } from "reactstrap";
+import { UserListCard } from "./UserListCard";
 
 const UsersList = ({ users, loading, getUsers }) => {
   useEffect(() => {
@@ -24,14 +25,14 @@ const UsersList = ({ users, loading, getUsers }) => {
         />
       </Col>
     ) : (
-      <Col>
-        <ListGroup>
-          {" "}
-          {users.map((user) => (
-            <ListGroupItem key={user.id}>{user.username}</ListGroupItem>
-          ))}{" "}
-        </ListGroup>
-      </Col>
+      <>
+        {" "}
+        {users.map((user) => (
+          <Col key={user.id} sm={6} md={3} lg={2}>
+            <UserListCard user={user} />
+          </Col>
+        ))}{" "}
+      </>
     );
   };
 
