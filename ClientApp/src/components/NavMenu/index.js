@@ -57,9 +57,9 @@ const NavMenu = ({ isLoggedIn, setLogout }) => {
                   <NavLink
                     tag={RouterNavLink}
                     className="text-dark"
-                    to="/values"
+                    to="/users"
                   >
-                    Values
+                    Users
                   </NavLink>
                 </NavItem>
               )}

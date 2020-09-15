@@ -7,8 +7,8 @@ import { Route, Switch, Redirect } from "react-router";
 
 import { Layout } from "./components/Layout";
 import LoginPage from "./components/LoginPage";
+import UsersPage from "./components/UsersList";
 import { HomePage } from "./components/HomePage";
-import ValuesPage from "./components/ValuesPage";
 import Toaster from "./components/common/Toaster";
 import RegisterPage from "./components/RegisterPage";
 import { NotFoundPage } from "./components/common/NotFoundPage";
@@ -38,7 +38,7 @@ const App = ({ setUser }) => {
           <Route exact path="/" component={HomePage} />
           <Route path="/login" component={LoginPage} />
           <Route path="/register" component={RegisterPage} />
-          <ProtectedRoute exact path="/values" component={ValuesPage} />
+          <ProtectedRoute exact path="/users" component={UsersPage} />
           <Route path="/404" component={NotFoundPage} />
           <Redirect to="/404" />
         </Switch>

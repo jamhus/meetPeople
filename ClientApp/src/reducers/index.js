@@ -1,14 +1,12 @@
 import { combineReducers } from "redux";
-import values from "./ValuesReducer";
+import users from "./UsersReducer";
 import toaster from "./ToasterReducer";
 import loading from "./LoadingReducer";
-import increment from "./IncrementReducer";
 import authentication from "./AuthenticationReducer";
 
 export default combineReducers({
-  values,
+  users,
   toaster,
   loading,
-  increment,
   authentication,
 });
