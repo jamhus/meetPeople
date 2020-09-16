@@ -11,6 +11,7 @@ import UsersPage from "./components/UsersList";
 import { HomePage } from "./components/HomePage";
 import Toaster from "./components/common/Toaster";
 import RegisterPage from "./components/RegisterPage";
+import UserDetailed from "./components/UsersList/UserDetailed";
 import { NotFoundPage } from "./components/common/NotFoundPage";
 import ProtectedRoute from "./components/common/ProtectedRoute";
 
@@ -39,6 +40,7 @@ const App = ({ setUser }) => {
           <Route path="/login" component={LoginPage} />
           <Route path="/register" component={RegisterPage} />
           <ProtectedRoute exact path="/users" component={UsersPage} />
+          <ProtectedRoute exact path="/user/:id" component={UserDetailed} />
           <Route path="/404" component={NotFoundPage} />
           <Redirect to="/404" />
         </Switch>

@@ -1,0 +1,50 @@
+.detailed-img {
+  margin: 25px !important;
+  width: 86% !important;
+}
+
+.card-body-alt {
+  padding: 0 25px;
+}
+.card-footer-alt {
+  padding: 10px 15px;
+  background: #fff;
+  border-top: none;
+}
+
+.tab-panel {
+  border: 1px solid #ddd;
+  padding: 10px;
+  border-radius: 4px;
+}
+
+.member-tabset > .nav-tabs > li:hover > a {
+  border: 0;
+  border-bottom: 4px solid #b4d9ff;
+}
+
+.member-tabset > .nav-tabs > li > a.active {
+  color: #a6a6a6;
+}
+
+.member-tabset > .nav-tabs > li > a.active {
+  border-bottom: 4px solid #1b6ec2 !important;
+  position: relative;
+}
+
+.member-tabset > .nav-tabs > li > a.active {
+  border: 0;
+  color: #333333;
+}
+
+.member-tabset > .nav-tabs > li > a.active {
+  color: #404040;
+}
+
+.member-tabset > .tab-content {
+  margin-top: -3px;
+  background-color: #fff;
+  border: 0;
+  border-top: 1px solid #eee;
+  padding: 15px 0;
+}

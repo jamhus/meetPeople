@@ -1,27 +1,29 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-import { faUser, faHeart, faEnvelope } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUser, faHeart, faEnvelope } from "@fortawesome/free-solid-svg-icons";
 import {
   Card,
-  CardBody,
   Button,
-  CardTitle,
-  CardText,
   CardImg,
+  CardText,
+  CardBody,
+  CardTitle,
 } from "reactstrap";
 
 import "./UserListCard.css";
 
-export const UserListCard = ({ user }) => {
+export const UserListCard = ({ user, history }) => {
+  const goToDetailed = () => history.push(`/user/${user.id}`);
+
   return (
     <Card className="mb-4">
       <div className="card-img-wrapper">
-        <CardImg src={user.photoUrl} />
+        <CardImg className="list-card" src={user.photoUrl} />
         <ul className="list-inline member-icons animate text-center">
           <li className="list-inline-item">
-            <Button className="btn btn-primary">
+            <Button className="btn btn-primary" onClick={goToDetailed}>
               {" "}
               <FontAwesomeIcon icon={faUser} />
             </Button>
@@ -54,4 +56,5 @@ UserListCard.propTypes = {
     knownAs: PropTypes.string,
     photoUrl: PropTypes.string,
   }).isRequired,
+  history: PropTypes.any.isRequired,
 };

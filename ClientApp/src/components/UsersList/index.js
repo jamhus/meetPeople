@@ -6,7 +6,7 @@ import { getUsers } from "../../actions";
 import { Row, Col, Spinner } from "reactstrap";
 import { UserListCard } from "./UserListCard";
 
-const UsersList = ({ users, loading, getUsers }) => {
+const UsersList = ({ users, loading, getUsers, history }) => {
   useEffect(() => {
     getUsers();
   }, [getUsers]);
@@ -29,7 +29,7 @@ const UsersList = ({ users, loading, getUsers }) => {
         {" "}
         {users.map((user) => (
           <Col key={user.id} sm={6} md={3} lg={2}>
-            <UserListCard user={user} />
+            <UserListCard user={user} history={history} />
           </Col>
         ))}{" "}
       </>
@@ -52,6 +52,7 @@ UsersList.propTypes = {
   ).isRequired,
   getUsers: PropTypes.func.isRequired,
   loading: PropTypes.bool.isRequired,
+  history: PropTypes.any.isRequired,
 };
 
 const mapStateToProps = (state) => ({

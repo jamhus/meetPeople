@@ -57,10 +57,10 @@ export const getUser = (id) => async (dispatch) => {
     redirect: "follow",
   };
   try {
-    const data = await fetch(`/api/user/${id}`, requestOptions).then((res) =>
+    const data = await fetch(`/api/users/${id}`, requestOptions).then((res) =>
       res.json()
     );
-    dispatch(fetchUsers(data));
+    dispatch(fetchUser(data));
   } catch (error) {
     console.log(error);
   }

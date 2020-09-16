@@ -1,10 +1,10 @@
-.card-img:hover {
+.list-card:hover {
   transform: scale(1.2, 1.2);
   transition-duration: 500ms;
   transition-timing-function: ease-out;
 }
 
-.card-img {
+.list-card {
   transform: scale(1, 1);
   transition-duration: 500ms;
   transition-timing-function: ease-out;

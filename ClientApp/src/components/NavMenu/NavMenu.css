@@ -1,4 +1,5 @@
 ﻿a.navbar-brand {
+  color: #1b6ec2 !important;
   white-space: normal;
   text-align: center;
   word-break: break-all;
@@ -14,5 +15,5 @@ html {
 }
 
 .box-shadow {
-  box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
+  box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.05);
 }
