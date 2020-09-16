@@ -20,11 +20,17 @@ import {
   ButtonGroup,
 } from "reactstrap";
 
-import { getUser, clearUser } from "../../actions";
+import { getUser, updateUser, clearUser } from "../../actions";
 
 import "./EditPage.css";
 
-const EditProfilePage = ({ getUser, clearUser, loading, userId }) => {
+const EditProfilePage = ({
+  userId,
+  loading,
+  getUser,
+  clearUser,
+  updateUser,
+}) => {
   const [age, setAge] = useState("");
   const [city, setCity] = useState("");
   const [created, setCreated] = useState("");
@@ -38,6 +44,11 @@ const EditProfilePage = ({ getUser, clearUser, loading, userId }) => {
 
   const toggle = (tab) => {
     if (activeTab !== tab) setActiveTab(tab);
+  };
+
+  const handleSave = () => {
+    const serObj = { city, interests, country, lookingFor, introduction };
+    return updateUser(userId, serObj);
   };
 
   useEffect(() => {
@@ -93,7 +104,9 @@ const EditProfilePage = ({ getUser, clearUser, loading, userId }) => {
             </CardBody>
             <CardFooter>
               <ButtonGroup className="d-flex">
-                <Button className="btn-block btn-success">Save profile</Button>
+                <Button className="btn-block btn-success" onClick={handleSave}>
+                  Save profile
+                </Button>
               </ButtonGroup>
             </CardFooter>
           </Card>
@@ -214,10 +227,11 @@ const EditProfilePage = ({ getUser, clearUser, loading, userId }) => {
 };
 
 EditProfilePage.propTypes = {
-  userId: PropTypes.string.isRequired,
   loading: PropTypes.bool.isRequired,
   getUser: PropTypes.func.isRequired,
+  userId: PropTypes.string.isRequired,
   clearUser: PropTypes.func.isRequired,
+  updateUser: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
@@ -228,6 +242,7 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   getUser: (id) => dispatch(getUser(id)),
   clearUser: () => dispatch(clearUser()),
+  updateUser: (id, user) => dispatch(updateUser(id, user)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(EditProfilePage);

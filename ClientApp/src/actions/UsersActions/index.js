@@ -1,4 +1,9 @@
 import { toggleLoading } from "../LoadingActions";
+import {
+  openToaster,
+  closeToaster,
+  TOASTER_TYPE_CONSTANTS,
+} from "../ToasterActions";
 import Cookies from "js-cookie";
 
 export const fetchUsers = (users) => ({
@@ -67,4 +72,48 @@ export const getUser = (id) => async (dispatch) => {
   }
   dispatch(toggleLoading(false));
   return user;
+};
+export const updateUser = (id, userObj) => async (dispatch) => {
+  dispatch(toggleLoading(true));
+
+  var myHeaders = new Headers();
+  const token = JSON.parse(Cookies.get("token"))["token"];
+  myHeaders.append("Authorization", `Bearer ${token}`);
+  myHeaders.append("Content-Type", "application/json");
+
+  const body = JSON.stringify(userObj);
+
+  var requestOptions = {
+    method: "PUT",
+    headers: myHeaders,
+    body,
+    redirect: "follow",
+  };
+
+  try {
+    const data = await fetch(`/api/users/${id}`, requestOptions);
+    dispatch(getUsers());
+    dispatch(
+      openToaster(
+        "Updated successfully!",
+        "User has been updated",
+        TOASTER_TYPE_CONSTANTS.SUCCESS
+      )
+    );
+    setTimeout(() => {
+      dispatch(closeToaster());
+    }, 5000);
+  } catch (error) {
+    dispatch(
+      openToaster(
+        "Update failed!",
+        "Errors while updating user",
+        TOASTER_TYPE_CONSTANTS.DANGER
+      )
+    );
+    setTimeout(() => {
+      dispatch(closeToaster());
+    }, 5000);
+  }
+  dispatch(toggleLoading(false));
 };
