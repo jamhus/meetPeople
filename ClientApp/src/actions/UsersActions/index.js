@@ -50,7 +50,7 @@ export const getUser = (id) => async (dispatch) => {
   var myHeaders = new Headers();
   const token = JSON.parse(Cookies.get("token"))["token"];
   myHeaders.append("Authorization", `Bearer ${token}`);
-
+  let user;
   var requestOptions = {
     method: "GET",
     headers: myHeaders,
@@ -61,8 +61,10 @@ export const getUser = (id) => async (dispatch) => {
       res.json()
     );
     dispatch(fetchUser(data));
+    user = data;
   } catch (error) {
     console.log(error);
   }
   dispatch(toggleLoading(false));
+  return user;
 };

@@ -6,6 +6,7 @@ import React, { useEffect } from "react";
 import { Route, Switch, Redirect } from "react-router";
 
 import { Layout } from "./components/Layout";
+import EditPage from "./components/EditPage";
 import LoginPage from "./components/LoginPage";
 import UsersPage from "./components/UsersList";
 import { HomePage } from "./components/HomePage";
@@ -15,15 +16,15 @@ import UserDetailed from "./components/UsersList/UserDetailed";
 import { NotFoundPage } from "./components/common/NotFoundPage";
 import ProtectedRoute from "./components/common/ProtectedRoute";
 
-import "./custom.css";
 import { setUser } from "./actions";
+import "./custom.css";
 
 const App = ({ setUser }) => {
   const readCookie = () => {
     const token = Cookies.get("token");
     if (token) {
       const claims = jwt_decode(token);
-      setUser(claims.nique_name);
+      setUser({ username: claims.unique_name, id: claims.nameid });
     }
   };
 
@@ -40,6 +41,7 @@ const App = ({ setUser }) => {
           <Route path="/login" component={LoginPage} />
           <Route path="/register" component={RegisterPage} />
           <ProtectedRoute exact path="/users" component={UsersPage} />
+          <ProtectedRoute exact path="/edit-profile" component={EditPage} />
           <ProtectedRoute exact path="/user/:id" component={UserDetailed} />
           <Route path="/404" component={NotFoundPage} />
           <Redirect to="/404" />
@@ -54,7 +56,7 @@ App.prototype = {
 };
 
 const mapDispatchToProps = (dispatch) => ({
-  setUser: (username) => dispatch(setUser({ username })),
+  setUser: (user) => dispatch(setUser(user)),
 });
 
 export default connect(null, mapDispatchToProps)(App);

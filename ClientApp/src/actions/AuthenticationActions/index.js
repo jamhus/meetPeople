@@ -27,7 +27,9 @@ export const handleLogin = (username, password) => async (dispatch) => {
           data.obj.then((userToken) => {
             const claims = jwt_decode(userToken["token"]);
             if (claims.unique_name) {
-              dispatch(setUser({ username: claims.unique_name }));
+              dispatch(
+                setUser({ username: claims.unique_name, id: claims.nameid })
+              );
             }
             dispatch(toggleLoading(false));
             Cookies.set("token", userToken, { expires: claims.exp });

@@ -2,6 +2,7 @@ import { AUTHENICATION_CONSTANTS } from "../../actions";
 
 const defaultState = {
   user: {
+    id: "",
     username: "",
     isLoggedIn: false,
   },
@@ -12,14 +13,15 @@ const Authentication = (state = defaultState, action) => {
       return {
         ...state,
         user: {
-          username: action.user.username,
           isLoggedIn: true,
+          ...action.user,
         },
       };
     case AUTHENICATION_CONSTANTS.LOGOUT:
       return {
         ...state,
         user: {
+          id: "",
           username: "",
           isLoggedIn: false,
         },
