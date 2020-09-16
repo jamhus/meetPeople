@@ -18,6 +18,8 @@ import {
   ButtonGroup,
 } from "reactstrap";
 
+import { PictureGallery } from "../../common/PictureGallery";
+
 import { getUser, clearUser } from "../../../actions";
 import "./UserDetailed.css";
 
@@ -43,7 +45,8 @@ const UserDetailed = ({ getUser, clearUser, user, loading, match }) => {
     </div>
   );
 
-  const listOfUsers = () => {
+  const renderUserProfile = () => {
+    const photos = user && user.photos ? user.photos : [];
     return loading ? (
       <Col xs="12" md={{ size: 6, offset: 6 }}>
         {" "}
@@ -145,7 +148,7 @@ const UserDetailed = ({ getUser, clearUser, user, loading, match }) => {
                 <TabPane tabId="3">
                   <Row>
                     <Col className="tab-wrapper" sm="12">
-                      <h4>photos will come soon</h4>
+                      <PictureGallery photos={photos} />
                     </Col>
                   </Row>
                 </TabPane>
@@ -166,7 +169,7 @@ const UserDetailed = ({ getUser, clearUser, user, loading, match }) => {
 
   return (
     <>
-      <Row className="mt-5">{listOfUsers()}</Row>
+      <Row className="mt-5">{renderUserProfile()}</Row>
     </>
   );
 };
