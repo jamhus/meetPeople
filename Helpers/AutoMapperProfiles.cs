@@ -22,6 +22,8 @@ namespace meetPeople.Helpers
                     opt.MapFrom(src=>src.DateOfBirth.CalculateAge()));
             
             CreateMap<Photo,PhotoForDetailedDto>();
+            CreateMap<PhotoForCreationDto,Photo>();
+            CreateMap<Photo,PhotoForReturnDto>();
             CreateMap<UserforUpdateDto,User>();
         }
     }

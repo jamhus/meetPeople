@@ -45,6 +45,8 @@ namespace meetPeople
                 configuration.RootPath = "ClientApp/build";
             });
 
+            services.Configure<CloudinarySettings>(Configuration.GetSection("CloudinarySettings"));
+
             services.AddAutoMapper(typeof(MeetPeopleRepository).Assembly);
 
             services.AddScoped<IAuthRepository,AuthRepository>();
