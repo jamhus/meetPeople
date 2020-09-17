@@ -8,7 +8,6 @@ import {
   Card,
   Form,
   Button,
-  Spinner,
   NavItem,
   TabPane,
   NavLink,
@@ -27,9 +26,9 @@ import { getUser, updateUser, clearUser, uploadPhoto } from "../../actions";
 import "./EditPage.css";
 
 const EditProfilePage = ({
-  userId,
   loading,
   getUser,
+  user,
   clearUser,
   updateUser,
   uploadPhoto,
@@ -39,7 +38,6 @@ const EditProfilePage = ({
   const [photos, setPhotos] = useState([]);
   const [created, setCreated] = useState("");
   const [country, setCountry] = useState("");
-  const [photoUrl, setPhotoUrl] = useState("");
   const [interests, setInterests] = useState("");
   const [activeTab, setActiveTab] = useState("1");
   const [lastActive, setLastActive] = useState("");
@@ -53,26 +51,23 @@ const EditProfilePage = ({
 
   const handleSave = () => {
     const serObj = { city, interests, country, lookingFor, introduction };
-    return updateUser(userId, serObj);
+    return updateUser(user.id, serObj);
   };
 
   useEffect(() => {
-    getUser(userId).then((data) => {
-      setAge(data.age);
-      setCity(data.city);
-      setPhotos(data.photos);
-      setCreated(data.created);
-      setCountry(data.country);
-      setInterests(data.interests);
-      setLastActive(data.lastActive);
-      setLookingFor(data.lookingFor);
-      setIntroduction(data.introduction);
-      setPhotoUrl(data.photos.find((x) => x.isMain).url);
-    });
+    setAge(user.age);
+    setCity(user.city);
+    setPhotos(user.photos);
+    setCreated(user.created);
+    setCountry(user.country);
+    setInterests(user.interests);
+    setLastActive(user.lastActive);
+    setLookingFor(user.lookingFor);
+    setIntroduction(user.introduction);
     return function cleanup() {
       clearUser();
     };
-  }, [getUser, clearUser, userId]);
+  }, [getUser, clearUser]);
 
   const infoLabel = (header, text) => (
     <div>
@@ -91,26 +86,13 @@ const EditProfilePage = ({
   };
 
   const upload = async (file) => {
-    await uploadPhoto(userId, file).then((photo) =>
-      setPhotos([...photos, photo])
-    );
+    await uploadPhoto(user.id, file);
     removeFile(file);
   };
 
   const renderUserProfile = () => {
-    return loading ? (
-      <Col xs="12" md={{ size: 6, offset: 6 }}>
-        {" "}
-        <Spinner
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            width: "3rem",
-            height: "3rem",
-          }}
-        />
-      </Col>
-    ) : (
+    const photoUrl = user.photos.find((x) => x.isMain === true).url || "";
+    return (
       <>
         <Col sm={4}>
           <Card>
@@ -126,8 +108,12 @@ const EditProfilePage = ({
             </CardBody>
             <CardFooter>
               <ButtonGroup className="d-flex">
-                <Button className="btn-block btn-success" onClick={handleSave}>
-                  Save profile
+                <Button
+                  disabled={loading}
+                  className="btn-block btn-success"
+                  onClick={handleSave}
+                >
+                  {loading ? "Loading..." : "Save profile"}
                 </Button>
               </ButtonGroup>
             </CardFooter>
@@ -255,17 +241,17 @@ const EditProfilePage = ({
 };
 
 EditProfilePage.propTypes = {
+  user: PropTypes.shape({}),
   uploadPhoto: PropTypes.func.isRequired,
   loading: PropTypes.bool.isRequired,
   getUser: PropTypes.func.isRequired,
-  userId: PropTypes.number.isRequired,
   clearUser: PropTypes.func.isRequired,
   updateUser: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
   loading: state.loading.loading,
-  userId: state.authentication.user.id,
+  user: state.authentication.user,
 });
 
 const mapDispatchToProps = (dispatch) => ({

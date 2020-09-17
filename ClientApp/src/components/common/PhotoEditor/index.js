@@ -15,6 +15,7 @@ const PhotoEditor = ({ userId, photos, setMain }) => {
         <CardImg className="img-thumbnail p-1" src={p.url} />
         <ButtonGroup className="d-flex mt-1">
           <Button
+            disabled={p.isMain}
             onClick={() => setMain(userId, p.id)}
             className="w-100 btn-primary btn-sm"
           >

@@ -31,6 +31,22 @@ const Authentication = (state = defaultState, action) => {
           ...action.user,
         },
       };
+    case USERS_CONSTANTS.FETCH_PROFILE:
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          ...action.user,
+        },
+      };
+    case USERS_CONSTANTS.ADD_USER_PHOTO:
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          photos: [...state.user.photos, action.photo],
+        },
+      };
     case AUTHENICATION_CONSTANTS.LOGOUT:
       return {
         ...state,

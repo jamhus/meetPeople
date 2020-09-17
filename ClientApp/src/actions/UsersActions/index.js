@@ -16,6 +16,11 @@ export const fetchUser = (user) => ({
   user,
 });
 
+export const fetchProfile = (user) => ({
+  type: USERS_CONSTANTS.FETCH_PROFILE,
+  user,
+});
+
 export const clearUser = () => ({
   type: USERS_CONSTANTS.CLEAR_USER,
 });
@@ -32,6 +37,7 @@ export const setMainPhoto = (id) => ({
 
 export const USERS_CONSTANTS = {
   FETCH_USER: "FETCH_USER",
+  FETCH_PROFILE: "FETCH_PROFILE",
   FETCH_USERS: "FETCH_USERS",
   CLEAR_USER: "CLEAR_USER",
   ADD_USER_PHOTO: "ADD_USER_PHOTO",
@@ -39,8 +45,6 @@ export const USERS_CONSTANTS = {
 };
 
 export const getUsers = () => async (dispatch) => {
-  dispatch(toggleLoading(true));
-
   var myHeaders = new Headers();
   const token = JSON.parse(Cookies.get("token"))["token"];
   myHeaders.append("Authorization", `Bearer ${token}`);
@@ -51,6 +55,8 @@ export const getUsers = () => async (dispatch) => {
     redirect: "follow",
   };
   try {
+    dispatch(toggleLoading(true));
+
     const data = await fetch("/api/users", requestOptions).then((res) =>
       res.json()
     );
@@ -62,8 +68,6 @@ export const getUsers = () => async (dispatch) => {
 };
 
 export const getUser = (id) => async (dispatch) => {
-  dispatch(toggleLoading(true));
-
   var myHeaders = new Headers();
   const token = JSON.parse(Cookies.get("token"))["token"];
   myHeaders.append("Authorization", `Bearer ${token}`);
@@ -74,6 +78,8 @@ export const getUser = (id) => async (dispatch) => {
     redirect: "follow",
   };
   try {
+    dispatch(toggleLoading(true));
+
     const data = await fetch(`/api/users/${id}`, requestOptions).then((res) =>
       res.json()
     );
@@ -85,8 +91,9 @@ export const getUser = (id) => async (dispatch) => {
   dispatch(toggleLoading(false));
   return user;
 };
+
 export const updateUser = (id, userObj) => async (dispatch) => {
-  dispatch(toggleLoading(true));
+  dispatch(fetchProfile(userObj));
 
   var myHeaders = new Headers();
   const token = JSON.parse(Cookies.get("token"))["token"];
@@ -103,6 +110,8 @@ export const updateUser = (id, userObj) => async (dispatch) => {
   };
 
   try {
+    dispatch(toggleLoading(true));
+
     await fetch(`/api/users/${id}`, requestOptions);
     dispatch(getUsers());
     dispatch(
@@ -131,8 +140,6 @@ export const updateUser = (id, userObj) => async (dispatch) => {
 };
 
 export const uploadPhoto = (id, file) => async (dispatch) => {
-  dispatch(toggleLoading(true));
-
   var myHeaders = new Headers();
   const token = JSON.parse(Cookies.get("token"))["token"];
   myHeaders.append("Authorization", `Bearer ${token}`);
@@ -148,18 +155,15 @@ export const uploadPhoto = (id, file) => async (dispatch) => {
   };
 
   try {
+    dispatch(toggleLoading(true));
     await fetch(`/api/Users/${id}/photos`, requestOptions)
       .then((response) => response.json())
-      .then((result) => {
-        return (photo = result);
-      })
+      .then((result) => dispatch(addPhoto(result)))
       .catch((error) => console.log("error", error));
   } catch (error) {
     console.log(error);
   }
   dispatch(toggleLoading(false));
-  console.log(photo);
-  return photo;
 };
 
 export const setMain = (userId, id) => async (dispatch) => {
