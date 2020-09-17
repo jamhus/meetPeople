@@ -49,6 +49,7 @@ const NavMenu = ({ isLoggedIn, setLogout, photoUrl }) => {
               {isLoggedIn && (
                 <NavItem>
                   <img
+                    alt="avatar"
                     className="nav-avatar img img-thumbnail rounded-circle"
                     src={photoUrl}
                   />

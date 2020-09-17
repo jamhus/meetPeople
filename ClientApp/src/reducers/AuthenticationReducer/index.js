@@ -2,7 +2,6 @@ import { AUTHENICATION_CONSTANTS, USERS_CONSTANTS } from "../../actions";
 
 const defaultState = {
   user: {
-    isLoggedIn: "",
     id: "",
     username: "",
     gender: "",
@@ -51,7 +50,6 @@ const Authentication = (state = defaultState, action) => {
       return {
         ...state,
         user: {
-          isLoggedIn: "",
           id: "",
           username: "",
           gender: "",

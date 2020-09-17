@@ -7,9 +7,9 @@ import { Route, Switch, Redirect } from "react-router";
 
 import { Layout } from "./components/Layout";
 import EditPage from "./components/EditPage";
+import HomePage from "./components/HomePage";
 import LoginPage from "./components/LoginPage";
 import UsersPage from "./components/UsersList";
-import { HomePage } from "./components/HomePage";
 import Toaster from "./components/common/Toaster";
 import RegisterPage from "./components/RegisterPage";
 import UserDetailed from "./components/UsersList/UserDetailed";

@@ -35,7 +35,6 @@ const EditProfilePage = ({
 }) => {
   const [age, setAge] = useState("");
   const [city, setCity] = useState("");
-  const [photos, setPhotos] = useState([]);
   const [created, setCreated] = useState("");
   const [country, setCountry] = useState("");
   const [interests, setInterests] = useState("");
@@ -51,13 +50,18 @@ const EditProfilePage = ({
 
   const handleSave = () => {
     const serObj = { city, interests, country, lookingFor, introduction };
-    return updateUser(user.id, serObj);
+    let edited = 0;
+    for (var key in serObj) {
+      if (user[key] !== serObj[key]) {
+        edited++;
+      }
+    }
+    return edited > 0 && updateUser(user.id, serObj);
   };
 
   useEffect(() => {
     setAge(user.age);
     setCity(user.city);
-    setPhotos(user.photos);
     setCreated(user.created);
     setCountry(user.country);
     setInterests(user.interests);
@@ -67,7 +71,18 @@ const EditProfilePage = ({
     return function cleanup() {
       clearUser();
     };
-  }, [getUser, clearUser]);
+  }, [
+    getUser,
+    clearUser,
+    user.age,
+    user.city,
+    user.country,
+    user.created,
+    user.interests,
+    user.introduction,
+    user.lastActive,
+    user.lookingFor,
+  ]);
 
   const infoLabel = (header, text) => (
     <div>

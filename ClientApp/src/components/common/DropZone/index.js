@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import { Button, ButtonGroup } from "reactstrap";
 import { useDropzone } from "react-dropzone";
 import { faTrash, faUpload } from "@fortawesome/free-solid-svg-icons";
@@ -61,4 +62,11 @@ export const DropZone = ({
       )}
     </div>
   );
+};
+
+DropZone.prototype = {
+  setSelectedFiles: PropTypes.func.isRequired,
+  selectedFiles: PropTypes.array.isRequired,
+  upload: PropTypes.func.isRequired,
+  removeFile: PropTypes.func.isRequired,
 };

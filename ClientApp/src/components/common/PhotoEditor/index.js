@@ -42,4 +42,13 @@ const mapDispatchToProps = (dispatch) => ({
 
 export default connect(mapStateToProps, mapDispatchToProps)(PhotoEditor);
 
-PhotoEditor.propTypes = {};
+PhotoEditor.propTypes = {
+  userId: PropTypes.number.isRequired,
+  photos: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.number,
+      url: PropTypes.string,
+      isMain: PropTypes.bool,
+    })
+  ).isRequired,
+};

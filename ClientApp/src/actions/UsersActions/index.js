@@ -143,7 +143,6 @@ export const uploadPhoto = (id, file) => async (dispatch) => {
   var myHeaders = new Headers();
   const token = JSON.parse(Cookies.get("token"))["token"];
   myHeaders.append("Authorization", `Bearer ${token}`);
-  let photo;
   var formdata = new FormData();
   formdata.append("File", file, "file");
 
