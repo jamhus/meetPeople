@@ -91,6 +91,17 @@ const Authentication = (state = defaultState, action) => {
         },
       };
     }
+    case USERS_CONSTANTS.DELETE_PHOTO: {
+      const newPhotos = state.user.photos.filter((p) => p.id !== action.id);
+
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          photos: [...newPhotos],
+        },
+      };
+    }
 
     default:
       return state;

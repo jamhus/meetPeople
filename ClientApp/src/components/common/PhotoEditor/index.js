@@ -6,9 +6,9 @@ import { Row, Col, CardImg, Button, ButtonGroup } from "reactstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash, faUserAlt } from "@fortawesome/free-solid-svg-icons";
 
-import { setMain } from "../../../actions";
+import { setMain, deletePhoto } from "../../../actions";
 
-const PhotoEditor = ({ userId, photos, setMain }) => {
+const PhotoEditor = ({ userId, photos, deletePhoto, setMain }) => {
   const renderPhotos = () =>
     photos.map((p) => (
       <Col key={p.id} sm={2}>
@@ -21,7 +21,11 @@ const PhotoEditor = ({ userId, photos, setMain }) => {
           >
             <FontAwesomeIcon icon={faUserAlt} />
           </Button>
-          <Button className="w-100 btn-danger btn-sm">
+          <Button
+            disabled={p.isMain}
+            onClick={() => deletePhoto(userId, p.id)}
+            className="w-100 btn-danger btn-sm"
+          >
             <FontAwesomeIcon icon={faTrash} />
           </Button>
         </ButtonGroup>
@@ -38,12 +42,15 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   setMain: (userId, id) => dispatch(setMain(userId, id)),
+  deletePhoto: (userId, id) => dispatch(deletePhoto(userId, id)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(PhotoEditor);
 
 PhotoEditor.propTypes = {
   userId: PropTypes.number.isRequired,
+  setMain: PropTypes.func.isRequired,
+  deletePhoto: PropTypes.func.isRequired,
   photos: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.number,

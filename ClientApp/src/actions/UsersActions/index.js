@@ -29,6 +29,10 @@ export const addPhoto = (photo) => ({
   type: USERS_CONSTANTS.ADD_USER_PHOTO,
   photo,
 });
+export const fetchDeletePhoto = (id) => ({
+  type: USERS_CONSTANTS.DELETE_PHOTO,
+  id,
+});
 
 export const setMainPhoto = (id) => ({
   type: USERS_CONSTANTS.SET_MAIN_PHOTO,
@@ -37,9 +41,10 @@ export const setMainPhoto = (id) => ({
 
 export const USERS_CONSTANTS = {
   FETCH_USER: "FETCH_USER",
-  FETCH_PROFILE: "FETCH_PROFILE",
-  FETCH_USERS: "FETCH_USERS",
   CLEAR_USER: "CLEAR_USER",
+  FETCH_USERS: "FETCH_USERS",
+  DELETE_PHOTO: "DELETE_PHOTO",
+  FETCH_PROFILE: "FETCH_PROFILE",
   ADD_USER_PHOTO: "ADD_USER_PHOTO",
   SET_MAIN_PHOTO: "SET_MAIN_PHOTO",
 };
@@ -158,6 +163,30 @@ export const uploadPhoto = (id, file) => async (dispatch) => {
     await fetch(`/api/Users/${id}/photos`, requestOptions)
       .then((response) => response.json())
       .then((result) => dispatch(addPhoto(result)))
+      .catch((error) => console.log("error", error));
+  } catch (error) {
+    console.log(error);
+  }
+  dispatch(toggleLoading(false));
+};
+
+export const deletePhoto = (userId, id) => async (dispatch) => {
+  dispatch(fetchDeletePhoto(id));
+
+  var myHeaders = new Headers();
+  const token = JSON.parse(Cookies.get("token"))["token"];
+  myHeaders.append("Authorization", `Bearer ${token}`);
+
+  var requestOptions = {
+    method: "DELETE",
+    headers: myHeaders,
+    redirect: "follow",
+  };
+
+  try {
+    dispatch(toggleLoading(true));
+    await fetch(`/api/Users/${userId}/photos/${id}`, requestOptions)
+      .then((response) => response.text())
       .catch((error) => console.log("error", error));
   } catch (error) {
     console.log(error);
