@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
+import moment from "moment";
 import {
   Row,
   Col,
@@ -118,8 +119,11 @@ const EditProfilePage = ({
             <CardBody className="card-body-alt">
               {infoLabel("Location:", `${city} , ${country}`)}
               {infoLabel("Age:", `${age}`)}
-              {infoLabel("Last active:", `${lastActive}`)}
-              {infoLabel("Member since:", `${created}`)}
+              {infoLabel("Last active:", `${moment(lastActive).fromNow()}`)}
+              {infoLabel(
+                "Member since:",
+                `${moment(created).format("MMM DD-YYYY")}`
+              )}
             </CardBody>
             <CardFooter>
               <ButtonGroup className="d-flex">

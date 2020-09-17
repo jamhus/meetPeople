@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
+import moment from "moment";
+
 import {
   Row,
   Col,
@@ -70,8 +72,14 @@ const UserDetailed = ({ getUser, clearUser, user, loading, match }) => {
             <CardBody className="card-body-alt">
               {infoLabel("Location:", `${user.city} , ${user.country}`)}
               {infoLabel("Age:", `${user.age}`)}
-              {infoLabel("Last active:", `${user.lastActive}`)}
-              {infoLabel("Member since:", `${user.created}`)}
+              {infoLabel(
+                "Last active:",
+                `${moment(user.lastActive).fromNow()}`
+              )}
+              {infoLabel(
+                "Member since:",
+                `${moment(user.created).format("MMM DD-YYYY")}`
+              )}
             </CardBody>
             <CardFooter>
               <ButtonGroup className="d-flex">
