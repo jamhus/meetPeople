@@ -17,7 +17,7 @@ import { setLogout } from "../../actions/AuthenticationActions";
 
 import "./NavMenu.css";
 
-const NavMenu = ({ isLoggedIn, setLogout }) => {
+const NavMenu = ({ isLoggedIn, setLogout, photoUrl }) => {
   const [collapsed, setCollapsed] = useState(false);
 
   const toggleNavbar = () => {
@@ -46,6 +46,15 @@ const NavMenu = ({ isLoggedIn, setLogout }) => {
             navbar
           >
             <ul className="navbar-nav flex-grow">
+              {isLoggedIn && (
+                <NavItem>
+                  <img
+                    className="nav-avatar img img-thumbnail rounded-circle"
+                    src={photoUrl}
+                  />
+                </NavItem>
+              )}
+
               <NavItem>
                 <NavLink tag={RouterNavLink} className="text-dark" to="/">
                   Home
@@ -112,8 +121,9 @@ NavMenu.propTypes = {
   setLogout: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = (state) => ({
-  isLoggedIn: state.authentication.user.isLoggedIn,
+const mapStateToProps = ({ authentication }) => ({
+  photoUrl: authentication.user.photoUrl,
+  isLoggedIn: authentication.user.isLoggedIn,
 });
 
 const mapDispatchToProps = (dispatch) => ({

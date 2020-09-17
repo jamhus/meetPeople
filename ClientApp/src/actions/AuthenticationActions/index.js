@@ -7,6 +7,33 @@ import Cookies from "js-cookie";
 import { toggleLoading } from "../LoadingActions";
 import jwt_decode from "jwt-decode";
 
+export const getCurrentUser = (id) => async (dispatch) => {
+  dispatch(toggleLoading(true));
+
+  var myHeaders = new Headers();
+  const token = JSON.parse(Cookies.get("token"))["token"];
+  myHeaders.append("Authorization", `Bearer ${token}`);
+  let user;
+  var requestOptions = {
+    method: "GET",
+    headers: myHeaders,
+    redirect: "follow",
+  };
+  try {
+    const data = await fetch(`/api/users/${id}`, requestOptions).then((res) =>
+      res.json()
+    );
+    dispatch(
+      setUser({ id: data.id, username: data.username, photoUrl: data.photoUrl })
+    );
+    user = data;
+  } catch (error) {
+    console.log(error);
+  }
+  dispatch(toggleLoading(false));
+  return user;
+};
+
 export const handleLogin = (username, password) => async (dispatch) => {
   dispatch(toggleLoading(true));
 
@@ -26,13 +53,11 @@ export const handleLogin = (username, password) => async (dispatch) => {
         if (data.status === 200) {
           data.obj.then((userToken) => {
             const claims = jwt_decode(userToken["token"]);
+            Cookies.set("token", userToken, { expires: claims.exp });
             if (claims.unique_name) {
-              dispatch(
-                setUser({ username: claims.unique_name, id: claims.nameid })
-              );
+              dispatch(getCurrentUser(claims.nameid));
             }
             dispatch(toggleLoading(false));
-            Cookies.set("token", userToken, { expires: claims.exp });
             dispatch(
               openToaster(
                 "Login successed!",

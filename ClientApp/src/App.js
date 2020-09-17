@@ -16,15 +16,15 @@ import UserDetailed from "./components/UsersList/UserDetailed";
 import { NotFoundPage } from "./components/common/NotFoundPage";
 import ProtectedRoute from "./components/common/ProtectedRoute";
 
-import { setUser } from "./actions";
+import { getCurrentUser } from "./actions";
 import "./custom.css";
 
-const App = ({ setUser }) => {
+const App = ({ getCurrentUser }) => {
   const readCookie = () => {
     const token = Cookies.get("token");
     if (token) {
       const claims = jwt_decode(token);
-      setUser({ username: claims.unique_name, id: claims.nameid });
+      getCurrentUser(claims.nameid);
     }
   };
 
@@ -52,11 +52,11 @@ const App = ({ setUser }) => {
 };
 
 App.prototype = {
-  setUser: PropTypes.func.isRequired,
+  getCurrentUser: PropTypes.func.isRequired,
 };
 
 const mapDispatchToProps = (dispatch) => ({
-  setUser: (user) => dispatch(setUser(user)),
+  getCurrentUser: (id) => dispatch(getCurrentUser(id)),
 });
 
 export default connect(null, mapDispatchToProps)(App);

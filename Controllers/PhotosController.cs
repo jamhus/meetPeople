@@ -49,7 +49,7 @@ namespace meetPeople.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> UploadPhoto (int userId, PhotoForCreationDto photoForCreation) {
+        public async Task<IActionResult> UploadPhoto (int userId, [FromForm]PhotoForCreationDto photoForCreation) {
                 
             if(userId!= int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value)){
                 return Unauthorized();

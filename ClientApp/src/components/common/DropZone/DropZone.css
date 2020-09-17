@@ -1,0 +1,21 @@
+.dropzone-wrapper {
+  margin-top: 16px;
+  height: 80px;
+  border: 2px dashed #c7c7c7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #767676;
+  background: #f7f7f7;
+  border-radius: 3px;
+}
+
+.dropzone-text {
+  margin: 12px 0;
+  cursor: pointer;
+}
+
+.dropzone-remove {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}

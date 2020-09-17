@@ -19,8 +19,10 @@ import {
   TabContent,
   ButtonGroup,
 } from "reactstrap";
+import { DropZone } from "../common/DropZone";
+import { PhotoEditor } from "../common/PhotoEditor";
 
-import { getUser, updateUser, clearUser } from "../../actions";
+import { getUser, updateUser, clearUser, uploadPhoto } from "../../actions";
 
 import "./EditPage.css";
 
@@ -30,9 +32,11 @@ const EditProfilePage = ({
   getUser,
   clearUser,
   updateUser,
+  uploadPhoto,
 }) => {
   const [age, setAge] = useState("");
   const [city, setCity] = useState("");
+  const [photos, setPhotos] = useState([]);
   const [created, setCreated] = useState("");
   const [country, setCountry] = useState("");
   const [photoUrl, setPhotoUrl] = useState("");
@@ -41,6 +45,7 @@ const EditProfilePage = ({
   const [lastActive, setLastActive] = useState("");
   const [lookingFor, setLookingFor] = useState("");
   const [introduction, setIntroduction] = useState("");
+  const [selectedFiles, setSelectedFiles] = useState(null);
 
   const toggle = (tab) => {
     if (activeTab !== tab) setActiveTab(tab);
@@ -55,13 +60,14 @@ const EditProfilePage = ({
     getUser(userId).then((data) => {
       setAge(data.age);
       setCity(data.city);
+      setPhotos(data.photos);
       setCreated(data.created);
       setCountry(data.country);
-      setPhotoUrl(data.photoUrl);
       setInterests(data.interests);
       setLastActive(data.lastActive);
       setLookingFor(data.lookingFor);
       setIntroduction(data.introduction);
+      setPhotoUrl(data.photos.find((x) => x.isMain).url);
     });
     return function cleanup() {
       clearUser();
@@ -74,6 +80,22 @@ const EditProfilePage = ({
       <p>{text}</p>
     </div>
   );
+
+  const removeFile = (file) => {
+    const files = selectedFiles.filter((x) => x.name !== file.name);
+    if (files.length > 0) {
+      return setSelectedFiles(files);
+    } else {
+      return setSelectedFiles(null);
+    }
+  };
+
+  const upload = async (file) => {
+    await uploadPhoto(userId, file).then((photo) =>
+      setPhotos([...photos, photo])
+    );
+    removeFile(file);
+  };
 
   const renderUserProfile = () => {
     return loading ? (
@@ -207,7 +229,13 @@ const EditProfilePage = ({
                 <TabPane tabId="2">
                   <Row>
                     <Col className="tab-wrapper" sm="12">
-                      {interests}
+                      <PhotoEditor photos={photos} />
+                      <DropZone
+                        removeFile={removeFile}
+                        upload={upload}
+                        selectedFiles={selectedFiles}
+                        setSelectedFiles={setSelectedFiles}
+                      />
                     </Col>
                   </Row>
                 </TabPane>
@@ -227,9 +255,10 @@ const EditProfilePage = ({
 };
 
 EditProfilePage.propTypes = {
+  uploadPhoto: PropTypes.func.isRequired,
   loading: PropTypes.bool.isRequired,
   getUser: PropTypes.func.isRequired,
-  userId: PropTypes.string.isRequired,
+  userId: PropTypes.number.isRequired,
   clearUser: PropTypes.func.isRequired,
   updateUser: PropTypes.func.isRequired,
 };
@@ -242,6 +271,7 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   getUser: (id) => dispatch(getUser(id)),
   clearUser: () => dispatch(clearUser()),
+  uploadPhoto: (id, file) => dispatch(uploadPhoto(id, file)),
   updateUser: (id, user) => dispatch(updateUser(id, user)),
 });
 
