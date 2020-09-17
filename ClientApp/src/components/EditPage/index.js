@@ -20,7 +20,7 @@ import {
   ButtonGroup,
 } from "reactstrap";
 import { DropZone } from "../common/DropZone";
-import { PhotoEditor } from "../common/PhotoEditor";
+import PhotoEditor from "../common/PhotoEditor";
 
 import { getUser, updateUser, clearUser, uploadPhoto } from "../../actions";
 
@@ -229,7 +229,7 @@ const EditProfilePage = ({
                 <TabPane tabId="2">
                   <Row>
                     <Col className="tab-wrapper" sm="12">
-                      <PhotoEditor photos={photos} />
+                      <PhotoEditor />
                       <DropZone
                         removeFile={removeFile}
                         upload={upload}

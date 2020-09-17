@@ -121,10 +121,14 @@ NavMenu.propTypes = {
   setLogout: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = ({ authentication }) => ({
-  photoUrl: authentication.user.photoUrl,
-  isLoggedIn: authentication.user.isLoggedIn,
-});
+const mapStateToProps = ({ authentication }) => {
+  const mainPhoto = authentication.user.photos.find((x) => x.isMain === true);
+
+  return {
+    photoUrl: mainPhoto ? mainPhoto.url : "",
+    isLoggedIn: authentication.user.isLoggedIn,
+  };
+};
 
 const mapDispatchToProps = (dispatch) => ({
   setLogout: () => dispatch(setLogout()),

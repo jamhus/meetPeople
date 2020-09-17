@@ -1,18 +1,23 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { faTrash, faUserAlt } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
+import { connect } from "react-redux";
 import { Row, Col, CardImg, Button, ButtonGroup } from "reactstrap";
 
-export const PhotoEditor = ({ photos }) => {
-  console.log(photos);
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrash, faUserAlt } from "@fortawesome/free-solid-svg-icons";
+
+import { setMain } from "../../../actions";
+
+const PhotoEditor = ({ userId, photos, setMain }) => {
   const renderPhotos = () =>
     photos.map((p) => (
       <Col key={p.id} sm={2}>
         <CardImg className="img-thumbnail p-1" src={p.url} />
         <ButtonGroup className="d-flex mt-1">
-          <Button className="w-100 btn-primary btn-sm">
+          <Button
+            onClick={() => setMain(userId, p.id)}
+            className="w-100 btn-primary btn-sm"
+          >
             <FontAwesomeIcon icon={faUserAlt} />
           </Button>
           <Button className="w-100 btn-danger btn-sm">
@@ -24,5 +29,16 @@ export const PhotoEditor = ({ photos }) => {
 
   return <Row>{renderPhotos()}</Row>;
 };
+
+const mapStateToProps = (state) => ({
+  userId: state.authentication.user.id,
+  photos: state.authentication.user.photos,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  setMain: (userId, id) => dispatch(setMain(userId, id)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(PhotoEditor);
 
 PhotoEditor.propTypes = {};

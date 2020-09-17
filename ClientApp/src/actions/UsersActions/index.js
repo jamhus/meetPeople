@@ -5,7 +5,6 @@ import {
   TOASTER_TYPE_CONSTANTS,
 } from "../ToasterActions";
 import Cookies from "js-cookie";
-import { faRss } from "@fortawesome/free-solid-svg-icons";
 
 export const fetchUsers = (users) => ({
   type: USERS_CONSTANTS.FETCH_USERS,
@@ -20,9 +19,15 @@ export const fetchUser = (user) => ({
 export const clearUser = () => ({
   type: USERS_CONSTANTS.CLEAR_USER,
 });
+
 export const addPhoto = (photo) => ({
   type: USERS_CONSTANTS.ADD_USER_PHOTO,
   photo,
+});
+
+export const setMainPhoto = (id) => ({
+  type: USERS_CONSTANTS.SET_MAIN_PHOTO,
+  id,
 });
 
 export const USERS_CONSTANTS = {
@@ -30,6 +35,7 @@ export const USERS_CONSTANTS = {
   FETCH_USERS: "FETCH_USERS",
   CLEAR_USER: "CLEAR_USER",
   ADD_USER_PHOTO: "ADD_USER_PHOTO",
+  SET_MAIN_PHOTO: "SET_MAIN_PHOTO",
 };
 
 export const getUsers = () => async (dispatch) => {
@@ -154,4 +160,28 @@ export const uploadPhoto = (id, file) => async (dispatch) => {
   dispatch(toggleLoading(false));
   console.log(photo);
   return photo;
+};
+
+export const setMain = (userId, id) => async (dispatch) => {
+  dispatch(toggleLoading(true));
+  dispatch(setMainPhoto(id));
+
+  var myHeaders = new Headers();
+  const token = JSON.parse(Cookies.get("token"))["token"];
+  myHeaders.append("Authorization", `Bearer ${token}`);
+
+  var requestOptions = {
+    method: "POST",
+    headers: myHeaders,
+    redirect: "follow",
+  };
+
+  try {
+    await fetch(`/api/Users/${userId}/photos/${id}/setMain`, requestOptions)
+      .then((response) => response.text())
+      .catch((error) => console.log("error", error));
+  } catch (error) {
+    console.log(error);
+  }
+  dispatch(toggleLoading(false));
 };

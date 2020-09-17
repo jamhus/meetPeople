@@ -23,9 +23,7 @@ export const getCurrentUser = (id) => async (dispatch) => {
     const data = await fetch(`/api/users/${id}`, requestOptions).then((res) =>
       res.json()
     );
-    dispatch(
-      setUser({ id: data.id, username: data.username, photoUrl: data.photoUrl })
-    );
+    dispatch(setUser({ ...data }));
     user = data;
   } catch (error) {
     console.log(error);
