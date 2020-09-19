@@ -46,7 +46,9 @@ namespace meetPeople.Repositories
 
         public async Task<PagedList<User>> GetUsers(UserParams userParams)
         {
-            var users =  _context.Users.Include(p=> p.Photos);
+            var users =  _context.Users.Include(p=> p.Photos).AsQueryable();
+
+            users = users.Where(user => user.Id != userParams.UserId && user.Gender == userParams.Gender);
 
             return await PagedList<User>.CreateAsync(users,userParams.PageNumber,userParams.PageSize);
         }

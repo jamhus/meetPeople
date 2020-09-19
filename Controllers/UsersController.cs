@@ -31,6 +31,16 @@ namespace meetPeople.Controllers
         public async Task<IActionResult> GetUsers([FromQuery]UserParams userParams)
         {
 
+            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+
+            var userFromRepo = await _repo.GetUser(userId);
+
+            userParams.UserId = userId;
+             
+            if(string.IsNullOrEmpty(userParams.Gender)){
+                userParams.Gender = userFromRepo.Gender == "male" ? "female" : "male";
+            }
+            
             var users = await _repo.GetUsers(userParams);
 
             var usersToReturn = _mapper.Map<IEnumerable<UserForListDto>>(users);
