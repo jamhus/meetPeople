@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using meetPeople.Data;
+using meetPeople.Helpers;
 using meetPeople.Interfaces;
 using meetPeople.Models;
 using Microsoft.EntityFrameworkCore;
@@ -43,9 +44,11 @@ namespace meetPeople.Repositories
             return await _context.Users.Include(p=> p.Photos).FirstOrDefaultAsync(u => u.Id == id);
         }
 
-        public async Task<IEnumerable<User>> GetUsers()
+        public async Task<PagedList<User>> GetUsers(UserParams userParams)
         {
-            return await _context.Users.Include(p=> p.Photos).ToListAsync();
+            var users =  _context.Users.Include(p=> p.Photos);
+
+            return await PagedList<User>.CreateAsync(users,userParams.PageNumber,userParams.PageSize);
         }
 
         public async Task<bool> SaveAll()
