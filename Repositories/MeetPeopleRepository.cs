@@ -48,7 +48,11 @@ namespace meetPeople.Repositories
         {
             var users =  _context.Users.Include(p=> p.Photos).AsQueryable();
 
-            users = users.Where(user => user.Id != userParams.UserId && user.Gender == userParams.Gender);
+            users = users.Where(user => user.Id != userParams.UserId);
+
+            if(userParams.Gender != "both") {
+                users = users.Where(user => user.Gender == userParams.Gender);
+            }
 
             return await PagedList<User>.CreateAsync(users,userParams.PageNumber,userParams.PageSize);
         }

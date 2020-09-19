@@ -6,13 +6,15 @@ import { getUsers } from "../../actions";
 import { Row, Col, Spinner } from "reactstrap";
 import { UserListCard } from "./UserListCard";
 import { PaginationBar } from "../common/PaginationBar";
+import { FilteringBar } from "../common/FilteringBar";
 
 const UsersList = ({ users, loading, getUsers, history, paginationProps }) => {
-  const [pageNumber, setPageNumber] = useState(1);
+  const [gender, setGender] = useState("both");
   const [pageSize, setPageSize] = useState(10);
+  const [pageNumber, setPageNumber] = useState(1);
   useEffect(() => {
-    getUsers(pageNumber, pageSize);
-  }, [getUsers, pageNumber, pageSize]);
+    getUsers(pageNumber, pageSize, gender);
+  }, [getUsers, pageNumber, pageSize, gender]);
 
   const listOfUsers = () => {
     return loading ? (
@@ -41,6 +43,7 @@ const UsersList = ({ users, loading, getUsers, history, paginationProps }) => {
 
   return (
     <>
+      <FilteringBar gender={gender} setGender={(gender) => setGender(gender)} />
       <Row className="mt-5">{listOfUsers()}</Row>
       <PaginationBar
         pageSize={pageSize}
@@ -77,6 +80,7 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  getUsers: (pageNumber, pageSize) => dispatch(getUsers(pageNumber, pageSize)),
+  getUsers: (pageNumber, pageSize, gender) =>
+    dispatch(getUsers(pageNumber, pageSize, gender)),
 });
 export default connect(mapStateToProps, mapDispatchToProps)(UsersList);

@@ -12,8 +12,6 @@ import {
   PaginationLink,
 } from "reactstrap";
 
-import "./PaginationBar.css";
-
 export const PaginationBar = ({
   setPage,
   pageSize,

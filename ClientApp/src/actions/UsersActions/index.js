@@ -49,7 +49,7 @@ export const USERS_CONSTANTS = {
   SET_MAIN_PHOTO: "SET_MAIN_PHOTO",
 };
 
-export const getUsers = (pageNumber, pageSize) => async (dispatch) => {
+export const getUsers = (pageNumber, pageSize, gender) => async (dispatch) => {
   var myHeaders = new Headers();
   const token = JSON.parse(Cookies.get("token"))["token"];
   myHeaders.append("Authorization", `Bearer ${token}`);
@@ -64,7 +64,7 @@ export const getUsers = (pageNumber, pageSize) => async (dispatch) => {
     dispatch(toggleLoading(true));
 
     const data = await fetch(
-      `/api/users?pageNumber=${pageNumber}&pageSize=${pageSize}`,
+      `/api/users?pageNumber=${pageNumber}&pageSize=${pageSize}&gender=${gender}`,
       requestOptions
     ).then((res) => {
       paginationProps = JSON.parse(res.headers.get("Pagination"));
