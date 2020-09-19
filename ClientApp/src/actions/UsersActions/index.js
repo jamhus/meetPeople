@@ -6,9 +6,9 @@ import {
 } from "../ToasterActions";
 import Cookies from "js-cookie";
 
-export const fetchUsers = (users) => ({
+export const fetchUsers = (usersResult) => ({
   type: USERS_CONSTANTS.FETCH_USERS,
-  users,
+  usersResult,
 });
 
 export const fetchUser = (user) => ({
@@ -49,11 +49,12 @@ export const USERS_CONSTANTS = {
   SET_MAIN_PHOTO: "SET_MAIN_PHOTO",
 };
 
-export const getUsers = () => async (dispatch) => {
+export const getUsers = (pageNumber, pageSize) => async (dispatch) => {
   var myHeaders = new Headers();
   const token = JSON.parse(Cookies.get("token"))["token"];
   myHeaders.append("Authorization", `Bearer ${token}`);
 
+  let paginationProps = {};
   var requestOptions = {
     method: "GET",
     headers: myHeaders,
@@ -62,10 +63,19 @@ export const getUsers = () => async (dispatch) => {
   try {
     dispatch(toggleLoading(true));
 
-    const data = await fetch("/api/users", requestOptions).then((res) =>
-      res.json()
-    );
-    dispatch(fetchUsers(data));
+    const data = await fetch(
+      `/api/users?pageNumber=${pageNumber}&pageSize=${pageSize}`,
+      requestOptions
+    ).then((res) => {
+      paginationProps = JSON.parse(res.headers.get("Pagination"));
+      return res.json();
+    });
+    const usersResult = {
+      items: [...data],
+      paginationProps,
+    };
+
+    dispatch(fetchUsers(usersResult));
   } catch (error) {
     console.log(error);
   }
