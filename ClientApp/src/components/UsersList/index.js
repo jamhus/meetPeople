@@ -9,12 +9,14 @@ import { PaginationBar } from "../common/PaginationBar";
 import { FilteringBar } from "../common/FilteringBar";
 
 const UsersList = ({ users, loading, getUsers, history, paginationProps }) => {
+  const [minAge, setMinAge] = useState(18);
+  const [maxAge, setMaxAge] = useState(99);
   const [gender, setGender] = useState("both");
   const [pageSize, setPageSize] = useState(10);
   const [pageNumber, setPageNumber] = useState(1);
   useEffect(() => {
-    getUsers(pageNumber, pageSize, gender);
-  }, [getUsers, pageNumber, pageSize, gender]);
+    getUsers(pageNumber, pageSize, gender, minAge, maxAge);
+  }, [getUsers, pageNumber, pageSize, gender, minAge, maxAge]);
 
   const listOfUsers = () => {
     return loading ? (
@@ -43,7 +45,14 @@ const UsersList = ({ users, loading, getUsers, history, paginationProps }) => {
 
   return (
     <>
-      <FilteringBar gender={gender} setGender={(gender) => setGender(gender)} />
+      <FilteringBar
+        gender={gender}
+        minAge={minAge}
+        maxAge={maxAge}
+        setMinAge={(min) => setMinAge(min)}
+        setMaxAge={(max) => setMaxAge(max)}
+        setGender={(gender) => setGender(gender)}
+      />
       <Row className="mt-5">{listOfUsers()}</Row>
       <PaginationBar
         pageSize={pageSize}
@@ -79,8 +88,10 @@ const mapStateToProps = (state) => ({
   paginationProps: state.users.paginationProps,
 });
 
-const mapDispatchToProps = (dispatch) => ({
-  getUsers: (pageNumber, pageSize, gender) =>
-    dispatch(getUsers(pageNumber, pageSize, gender)),
-});
+const mapDispatchToProps = (dispatch) => {
+  return {
+    getUsers: (pageNumber, pageSize, gender, minAge, maxAge) =>
+      dispatch(getUsers(pageNumber, pageSize, gender, minAge, maxAge)),
+  };
+};
 export default connect(mapStateToProps, mapDispatchToProps)(UsersList);

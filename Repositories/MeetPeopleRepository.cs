@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -52,6 +53,13 @@ namespace meetPeople.Repositories
 
             if(userParams.Gender != "both") {
                 users = users.Where(user => user.Gender == userParams.Gender);
+            }
+
+            if(userParams.MinAge != 18 || userParams.MaxAge != 99){
+                var minDateOfBirth = DateTime.Today.AddYears(-userParams.MaxAge-1);
+                var maxDateOfBirth = DateTime.Today.AddYears(-userParams.MinAge);
+
+                users = users.Where(user=> user.DateOfBirth >= minDateOfBirth && user.DateOfBirth <=maxDateOfBirth);
             }
 
             return await PagedList<User>.CreateAsync(users,userParams.PageNumber,userParams.PageSize);
