@@ -3,7 +3,6 @@ import PropTypes from "prop-types";
 import {
   Row,
   Col,
-  Input,
   Dropdown,
   DropdownMenu,
   DropdownItem,
@@ -16,13 +15,36 @@ export const FilteringBar = ({
   gender,
   minAge,
   maxAge,
+  orderBy,
   setGender,
   setMinAge,
   setMaxAge,
+  setOrderBy,
 }) => {
   const [genderDropdownOpen, setGenderDropDownOpen] = useState(false);
+  const [orderDropdownOpen, setOrderDropDownOpen] = useState(false);
 
+  const toggleOrder = () => setOrderDropDownOpen((prevState) => !prevState);
   const toggleGender = () => setGenderDropDownOpen((prevState) => !prevState);
+
+  const renderOrder = () => {
+    return (
+      <Dropdown size="sm" isOpen={orderDropdownOpen} toggle={toggleOrder}>
+        <DropdownToggle
+          className="btn-primary filter-label"
+          caret
+        >{`Order by: ${orderBy}`}</DropdownToggle>
+        <DropdownMenu>
+          <DropdownItem onClick={() => setOrderBy("created")}>
+            Created
+          </DropdownItem>
+          <DropdownItem onClick={() => setOrderBy("activity")}>
+            Last active
+          </DropdownItem>
+        </DropdownMenu>
+      </Dropdown>
+    );
+  };
 
   const renderGender = () => {
     return (
@@ -80,11 +102,20 @@ export const FilteringBar = ({
       <Col sm={12} md={4}>
         {renderAge()}
       </Col>
+      <Col sm={12} md={2}>
+        {renderOrder()}
+      </Col>
     </Row>
   );
 };
 
 FilteringBar.propTypes = {
   gender: PropTypes.string.isRequired,
+  minAge: PropTypes.number.isRequired,
+  maxAge: PropTypes.number.isRequired,
+  orderBy: PropTypes.string.isRequired,
   setGender: PropTypes.func.isRequired,
+  setMinAge: PropTypes.func.isRequired,
+  setMaxAge: PropTypes.func.isRequired,
+  setOrderBy: PropTypes.func.isRequired,
 };

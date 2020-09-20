@@ -14,9 +14,10 @@ const UsersList = ({ users, loading, getUsers, history, paginationProps }) => {
   const [gender, setGender] = useState("both");
   const [pageSize, setPageSize] = useState(10);
   const [pageNumber, setPageNumber] = useState(1);
+  const [orderBy, setOrderBy] = useState("created");
   useEffect(() => {
-    getUsers(pageNumber, pageSize, gender, minAge, maxAge);
-  }, [getUsers, pageNumber, pageSize, gender, minAge, maxAge]);
+    getUsers(pageNumber, pageSize, gender, minAge, maxAge, orderBy);
+  }, [getUsers, pageNumber, pageSize, gender, minAge, maxAge, orderBy]);
 
   const listOfUsers = () => {
     return loading ? (
@@ -49,9 +50,11 @@ const UsersList = ({ users, loading, getUsers, history, paginationProps }) => {
         gender={gender}
         minAge={minAge}
         maxAge={maxAge}
+        orderBy={orderBy}
         setMinAge={(min) => setMinAge(min)}
         setMaxAge={(max) => setMaxAge(max)}
         setGender={(gender) => setGender(gender)}
+        setOrderBy={(orderBy) => setOrderBy(orderBy)}
       />
       <Row className="mt-5">{listOfUsers()}</Row>
       <PaginationBar
@@ -90,8 +93,8 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    getUsers: (pageNumber, pageSize, gender, minAge, maxAge) =>
-      dispatch(getUsers(pageNumber, pageSize, gender, minAge, maxAge)),
+    getUsers: (pageNumber, pageSize, gender, minAge, maxAge, orderBy) =>
+      dispatch(getUsers(pageNumber, pageSize, gender, minAge, maxAge, orderBy)),
   };
 };
 export default connect(mapStateToProps, mapDispatchToProps)(UsersList);

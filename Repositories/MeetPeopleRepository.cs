@@ -47,7 +47,7 @@ namespace meetPeople.Repositories
 
         public async Task<PagedList<User>> GetUsers(UserParams userParams)
         {
-            var users =  _context.Users.Include(p=> p.Photos).AsQueryable();
+            var users =  _context.Users.Include(p=> p.Photos).OrderByDescending(user=> user.LastActive).AsQueryable();
 
             users = users.Where(user => user.Id != userParams.UserId);
 
@@ -60,6 +60,18 @@ namespace meetPeople.Repositories
                 var maxDateOfBirth = DateTime.Today.AddYears(-userParams.MinAge);
 
                 users = users.Where(user=> user.DateOfBirth >= minDateOfBirth && user.DateOfBirth <=maxDateOfBirth);
+            }
+
+            if(!string.IsNullOrEmpty(userParams.OrderBy)){
+                switch(userParams.OrderBy)
+                {
+                    case "created" :
+                        users = users.OrderByDescending(user=>user.Created);
+                        break;
+                    default:
+                        users = users.OrderByDescending(user => user.LastActive);
+                        break;
+                }
             }
 
             return await PagedList<User>.CreateAsync(users,userParams.PageNumber,userParams.PageSize);

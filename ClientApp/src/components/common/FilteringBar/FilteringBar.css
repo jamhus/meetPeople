@@ -3,6 +3,10 @@
 }
 
 .filtering-bar-wrapper {
-  align-items: baseline;
+  align-items: center;
   justify-content: center;
+}
+
+.filtering-bar-wrapper input {
+  height: 31px !important;
 }
