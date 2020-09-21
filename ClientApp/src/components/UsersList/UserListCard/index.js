@@ -14,7 +14,7 @@ import {
 
 import "./UserListCard.css";
 
-export const UserListCard = ({ user, history }) => {
+export const UserListCard = ({ user, history, handleLike }) => {
   const goToDetailed = () => history.push(`/user/${user.id}`);
 
   return (
@@ -27,7 +27,10 @@ export const UserListCard = ({ user, history }) => {
               {" "}
               <FontAwesomeIcon icon={faUser} />
             </Button>
-            <Button className="btn mx-2 btn-primary">
+            <Button
+              className="btn mx-2 btn-primary"
+              onClick={() => handleLike({ id: user.id, name: user.knownAs })}
+            >
               {" "}
               <FontAwesomeIcon icon={faHeart} />
             </Button>

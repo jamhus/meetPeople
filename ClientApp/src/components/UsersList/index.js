@@ -1,14 +1,22 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { getUsers } from "../../actions";
+import { getUsers, sendLike } from "../../actions";
 
 import { Row, Col, Spinner } from "reactstrap";
 import { UserListCard } from "./UserListCard";
 import { PaginationBar } from "../common/PaginationBar";
 import { FilteringBar } from "../common/FilteringBar";
 
-const UsersList = ({ users, loading, getUsers, history, paginationProps }) => {
+const UsersList = ({
+  users,
+  userId,
+  loading,
+  getUsers,
+  history,
+  paginationProps,
+  sendLike,
+}) => {
   const [minAge, setMinAge] = useState(18);
   const [maxAge, setMaxAge] = useState(99);
   const [gender, setGender] = useState("both");
@@ -18,6 +26,10 @@ const UsersList = ({ users, loading, getUsers, history, paginationProps }) => {
   useEffect(() => {
     getUsers(pageNumber, pageSize, gender, minAge, maxAge, orderBy);
   }, [getUsers, pageNumber, pageSize, gender, minAge, maxAge, orderBy]);
+
+  const handleLike = (recipient) => {
+    return sendLike(userId, recipient);
+  };
 
   const listOfUsers = () => {
     return loading ? (
@@ -37,7 +49,11 @@ const UsersList = ({ users, loading, getUsers, history, paginationProps }) => {
         {" "}
         {users.map((user) => (
           <Col key={user.id} sm={6} md={3} lg={2}>
-            <UserListCard user={user} history={history} />
+            <UserListCard
+              handleLike={(recipient) => handleLike(recipient)}
+              user={user}
+              history={history}
+            />
           </Col>
         ))}{" "}
       </>
@@ -74,7 +90,9 @@ UsersList.propTypes = {
       username: PropTypes.string,
     })
   ).isRequired,
+  userId: PropTypes.number.isRequired,
   getUsers: PropTypes.func.isRequired,
+  sendLike: PropTypes.func.isRequired,
   loading: PropTypes.bool.isRequired,
   history: PropTypes.any.isRequired,
   paginationProps: PropTypes.shape({
@@ -86,6 +104,7 @@ UsersList.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
+  userId: state.authentication.user.id,
   users: state.users.usersList,
   loading: state.loading.loading,
   paginationProps: state.users.paginationProps,
@@ -95,6 +114,8 @@ const mapDispatchToProps = (dispatch) => {
   return {
     getUsers: (pageNumber, pageSize, gender, minAge, maxAge, orderBy) =>
       dispatch(getUsers(pageNumber, pageSize, gender, minAge, maxAge, orderBy)),
+
+    sendLike: (userId, recipient) => dispatch(sendLike(userId, recipient)),
   };
 };
 export default connect(mapStateToProps, mapDispatchToProps)(UsersList);

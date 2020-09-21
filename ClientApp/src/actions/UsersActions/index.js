@@ -40,6 +40,7 @@ export const setMainPhoto = (id) => ({
 });
 
 export const USERS_CONSTANTS = {
+  SEND_LIKE: "SEND_LIKE",
   FETCH_USER: "FETCH_USER",
   CLEAR_USER: "CLEAR_USER",
   FETCH_USERS: "FETCH_USERS",
@@ -232,6 +233,52 @@ export const setMain = (userId, id) => async (dispatch) => {
     await fetch(`/api/Users/${userId}/photos/${id}/setMain`, requestOptions)
       .then((response) => response.text())
       .catch((error) => console.log("error", error));
+  } catch (error) {
+    console.log(error);
+  }
+  dispatch(toggleLoading(false));
+};
+
+export const sendLike = (userId, recipient) => async (dispatch) => {
+  var myHeaders = new Headers();
+  const token = JSON.parse(Cookies.get("token"))["token"];
+  myHeaders.append("Authorization", `Bearer ${token}`);
+
+  var requestOptions = {
+    method: "Post",
+    headers: myHeaders,
+    body: {},
+    redirect: "follow",
+  };
+  try {
+    dispatch(toggleLoading(true));
+
+    await fetch(
+      `/api/users/${userId}/like/${recipient.id}`,
+      requestOptions
+    ).then((res) => {
+      if (res.status === 400) {
+        dispatch(
+          openToaster(
+            "Liked Faield!",
+            `You already like user ${recipient.name}!`,
+            TOASTER_TYPE_CONSTANTS.DANGER
+          )
+        );
+      } else {
+        dispatch(
+          openToaster(
+            "Liked successfully!",
+            `You have liked user ${recipient.name}!`,
+            TOASTER_TYPE_CONSTANTS.SUCCESS
+          )
+        );
+      }
+    });
+
+    setTimeout(() => {
+      dispatch(closeToaster());
+    }, 5000);
   } catch (error) {
     console.log(error);
   }

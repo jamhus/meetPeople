@@ -22,14 +22,30 @@ import {
 
 import { PictureGallery } from "../../common/PictureGallery";
 
-import { getUser, clearUser } from "../../../actions";
+import { getUser, clearUser, sendLike } from "../../../actions";
 import "./UserDetailed.css";
 
-const UserDetailed = ({ getUser, clearUser, user, loading, match }) => {
+const UserDetailed = ({
+  getUser,
+  sendLike,
+  clearUser,
+  user,
+  userId,
+  loading,
+  match,
+}) => {
   const [activeTab, setActiveTab] = useState("1");
 
   const toggle = (tab) => {
     if (activeTab !== tab) setActiveTab(tab);
+  };
+
+  const handleLike = () => {
+    const recipient = {
+      id: user.id,
+      name: user.knownAs,
+    };
+    return sendLike(userId, recipient);
   };
 
   useEffect(() => {
@@ -83,7 +99,9 @@ const UserDetailed = ({ getUser, clearUser, user, loading, match }) => {
             </CardBody>
             <CardFooter>
               <ButtonGroup className="d-flex">
-                <Button className="w-100 btn-primary">Like</Button>
+                <Button onClick={handleLike} className="w-100 btn-primary">
+                  Like
+                </Button>
                 <Button className="w-100 btn-success">Message</Button>
               </ButtonGroup>
             </CardFooter>
@@ -183,6 +201,8 @@ const UserDetailed = ({ getUser, clearUser, user, loading, match }) => {
 };
 
 UserDetailed.propTypes = {
+  userId: PropTypes.number.isRequired,
+  sendLike: PropTypes.func.isRequired,
   user: PropTypes.shape({
     id: PropTypes.number,
     age: PropTypes.number,
@@ -219,11 +239,13 @@ UserDetailed.propTypes = {
 const mapStateToProps = (state) => ({
   user: state.users.userDetailed,
   loading: state.loading.loading,
+  userId: state.authentication.user.id,
 });
 
 const mapDispatchToProps = (dispatch) => ({
   getUser: (id) => dispatch(getUser(id)),
   clearUser: () => dispatch(clearUser()),
+  sendLike: (userId, recipient) => dispatch(sendLike(userId, recipient)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(UserDetailed);
