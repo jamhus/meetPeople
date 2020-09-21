@@ -30,6 +30,11 @@ namespace meetPeople.Repositories
             _context.Remove(entity);
         }
 
+        public async Task<Like> GetLike(int userId, int recipientId)
+        {
+            return await _context.Likes.FirstOrDefaultAsync(l=> l.LikerId == userId && l.LikeeId == recipientId); 
+        }
+
         public async Task<Photo> GetMainPhoto(int id)
         {
             return await _context.Photos.Where(x=>x.UserId == id && x.IsMain == true).FirstOrDefaultAsync();
@@ -55,6 +60,16 @@ namespace meetPeople.Repositories
                 users = users.Where(user => user.Gender == userParams.Gender);
             }
 
+            if(userParams.Likers) {
+                var userLikers = await GetUserLikes(userParams.UserId,userParams.Likers);
+                users = users.Where(u=> userLikers.Contains(u.Id));
+            }
+
+            if(userParams.Likees) {
+                var userLikees = await GetUserLikes(userParams.UserId,userParams.Likers);
+                users = users.Where(u=> userLikees.Contains(u.Id));
+            }
+
             if(userParams.MinAge != 18 || userParams.MaxAge != 99){
                 var minDateOfBirth = DateTime.Today.AddYears(-userParams.MaxAge-1);
                 var maxDateOfBirth = DateTime.Today.AddYears(-userParams.MinAge);
@@ -75,6 +90,16 @@ namespace meetPeople.Repositories
             }
 
             return await PagedList<User>.CreateAsync(users,userParams.PageNumber,userParams.PageSize);
+        }
+
+        private async Task<IEnumerable<int>> GetUserLikes(int id, bool likers) {
+            var user = await _context.Users.Include(u=> u.Likers).Include(u => u.Likees).FirstOrDefaultAsync(u=>u.Id == id);
+            if(likers){
+                return user.Likers.Where(u=>u.LikeeId == id).Select(i=>i.LikerId);
+            }
+            else {
+                return user.Likees.Where(u=>u.LikerId == id).Select(i=>i.LikeeId);
+            }
         }
 
         public async Task<bool> SaveAll()
