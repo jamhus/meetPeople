@@ -56,7 +56,9 @@ export const getUsers = (
   gender,
   minAge,
   maxAge,
-  orderBy
+  orderBy,
+  likers,
+  likees
 ) => async (dispatch) => {
   var myHeaders = new Headers();
   const token = JSON.parse(Cookies.get("token"))["token"];
@@ -75,7 +77,7 @@ export const getUsers = (
     const maxAgeParam = maxAge !== "" ? maxAge : 99;
 
     const data = await fetch(
-      `/api/users?pageNumber=${pageNumber}&pageSize=${pageSize}&gender=${gender}&minAge=${minAgeParam}&maxAge=${maxAgeParam}&orderBy=${orderBy}`,
+      `/api/users?pageNumber=${pageNumber}&pageSize=${pageSize}&gender=${gender}&minAge=${minAgeParam}&maxAge=${maxAgeParam}&orderBy=${orderBy}&likers=${likers}&likees=${likees}`,
       requestOptions
     ).then((res) => {
       paginationProps = JSON.parse(res.headers.get("Pagination"));

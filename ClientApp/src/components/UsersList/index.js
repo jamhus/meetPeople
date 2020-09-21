@@ -19,16 +19,59 @@ const UsersList = ({
 }) => {
   const [minAge, setMinAge] = useState(18);
   const [maxAge, setMaxAge] = useState(99);
+  const [likers, setLikers] = useState(false);
+  const [likees, setLikees] = useState(false);
   const [gender, setGender] = useState("both");
   const [pageSize, setPageSize] = useState(10);
   const [pageNumber, setPageNumber] = useState(1);
   const [orderBy, setOrderBy] = useState("created");
   useEffect(() => {
-    getUsers(pageNumber, pageSize, gender, minAge, maxAge, orderBy);
-  }, [getUsers, pageNumber, pageSize, gender, minAge, maxAge, orderBy]);
+    getUsers(
+      pageNumber,
+      pageSize,
+      gender,
+      minAge,
+      maxAge,
+      orderBy,
+      likers,
+      likees
+    );
+  }, [
+    getUsers,
+    pageNumber,
+    pageSize,
+    gender,
+    minAge,
+    maxAge,
+    orderBy,
+    likers,
+    likees,
+  ]);
 
   const handleLike = (recipient) => {
     return sendLike(userId, recipient);
+  };
+
+  const SENDERS = {
+    LIKEES: "LIKEES",
+    LIKERS: "LIKERS",
+    ALL: "ALL",
+  };
+
+  const handleToggleLikes = (sender) => {
+    switch (sender) {
+      case SENDERS.LIKERS:
+        setLikees(false);
+        setLikers(true);
+        break;
+      case SENDERS.LIKEES:
+        setLikers(false);
+        setLikees(true);
+        break;
+      default:
+        setLikees(false);
+        setLikers(false);
+    }
   };
 
   const listOfUsers = () => {
@@ -67,10 +110,14 @@ const UsersList = ({
         minAge={minAge}
         maxAge={maxAge}
         orderBy={orderBy}
+        senders={SENDERS}
+        likees={likees}
+        likers={likers}
         setMinAge={(min) => setMinAge(min)}
         setMaxAge={(max) => setMaxAge(max)}
         setGender={(gender) => setGender(gender)}
         setOrderBy={(orderBy) => setOrderBy(orderBy)}
+        handleToggleLikes={(sender) => handleToggleLikes(sender)}
       />
       <Row className="mt-5">{listOfUsers()}</Row>
       <PaginationBar
@@ -112,8 +159,28 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    getUsers: (pageNumber, pageSize, gender, minAge, maxAge, orderBy) =>
-      dispatch(getUsers(pageNumber, pageSize, gender, minAge, maxAge, orderBy)),
+    getUsers: (
+      pageNumber,
+      pageSize,
+      gender,
+      minAge,
+      maxAge,
+      orderBy,
+      likers,
+      likees
+    ) =>
+      dispatch(
+        getUsers(
+          pageNumber,
+          pageSize,
+          gender,
+          minAge,
+          maxAge,
+          orderBy,
+          likers,
+          likees
+        )
+      ),
 
     sendLike: (userId, recipient) => dispatch(sendLike(userId, recipient)),
   };

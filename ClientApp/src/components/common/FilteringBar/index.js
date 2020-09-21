@@ -7,11 +7,15 @@ import {
   DropdownMenu,
   DropdownItem,
   DropdownToggle,
+  Button,
+  ButtonGroup,
 } from "reactstrap";
 
 import "./FilteringBar.css";
 
 export const FilteringBar = ({
+  likers,
+  likees,
   gender,
   minAge,
   maxAge,
@@ -20,6 +24,8 @@ export const FilteringBar = ({
   setMinAge,
   setMaxAge,
   setOrderBy,
+  senders,
+  handleToggleLikes,
 }) => {
   const [genderDropdownOpen, setGenderDropDownOpen] = useState(false);
   const [orderDropdownOpen, setOrderDropDownOpen] = useState(false);
@@ -43,6 +49,33 @@ export const FilteringBar = ({
           </DropdownItem>
         </DropdownMenu>
       </Dropdown>
+    );
+  };
+  const renderLikeFilters = () => {
+    return (
+      <ButtonGroup className="d-flex">
+        <Button
+          disabled={likees}
+          onClick={() => handleToggleLikes(senders.LIKEES)}
+          className="btn-sm w-100 btn-primary"
+        >
+          My likes
+        </Button>
+        <Button
+          disabled={likers}
+          onClick={() => handleToggleLikes(senders.LIKERS)}
+          className=" btn-sm w-100 btn-primary"
+        >
+          My likers
+        </Button>
+        <Button
+          disabled={!likers && !likees}
+          onClick={() => handleToggleLikes(senders.ALL)}
+          className="btn-sm w-100 btn-primary btn-sm"
+        >
+          All
+        </Button>
+      </ButtonGroup>
     );
   };
 
@@ -105,11 +138,16 @@ export const FilteringBar = ({
       <Col sm={12} md={2}>
         {renderOrder()}
       </Col>
+      <Col sm={12} md={4}>
+        {renderLikeFilters()}
+      </Col>
     </Row>
   );
 };
 
 FilteringBar.propTypes = {
+  likers: PropTypes.bool.isRequired,
+  likees: PropTypes.bool.isRequired,
   gender: PropTypes.string.isRequired,
   minAge: PropTypes.number.isRequired,
   maxAge: PropTypes.number.isRequired,
@@ -118,4 +156,10 @@ FilteringBar.propTypes = {
   setMinAge: PropTypes.func.isRequired,
   setMaxAge: PropTypes.func.isRequired,
   setOrderBy: PropTypes.func.isRequired,
+  senders: PropTypes.shape({
+    LIKERS: PropTypes.string,
+    LIKEES: PropTypes.string,
+    ALL: PropTypes.string,
+  }),
+  handleToggleLikes: PropTypes.func.isRequired,
 };
