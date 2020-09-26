@@ -135,9 +135,15 @@ namespace meetPeople.Repositories
             return PagedList<Message>.CreateAsync(messages,messageParams.PageNumber,messageParams.PageSize);
         }
 
-        public Task<IEnumerable<Message>> GetMessageThread(int userId, int recipientId)
+        public async Task<IEnumerable<Message>> GetMessageThread(int userId, int recipientId)
         {
-            throw new NotImplementedException();
+            var messages = await _context.Messages
+            .Include(u=>u.Sender).ThenInclude(u=>u.Photos)
+            .Include(u=>u.Recipient).ThenInclude(u=>u.Photos)
+            .Where(u=> u.SenderId == recipientId && u.RecipientId == userId 
+            || u.SenderId == userId && u.RecipientId == recipientId ).OrderByDescending(u=>u.DateSent).ToListAsync();
+
+            return messages;
         }
     }
-}
+} 

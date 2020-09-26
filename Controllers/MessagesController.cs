@@ -84,6 +84,17 @@ namespace meetPeople.Controllers
             throw new Exception("Error while creating message");
         }
 
-        
+        [HttpGet("threads/{recipientId}")]
+        public async Task<IActionResult> GetMessageThread(int userId,int recipientId){
+
+            if(userId!= int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value)){
+                return Unauthorized();
+            }
+
+            var messagesFromRepo = await _repo.GetMessageThread(userId,recipientId);
+            var messagesThread = _mapper.Map<IEnumerable<MessageToReturnDto>>(messagesFromRepo);
+
+            return Ok(messagesThread);
+        }
     }
 }
