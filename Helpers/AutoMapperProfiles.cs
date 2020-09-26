@@ -21,10 +21,16 @@ namespace meetPeople.Helpers
                 .ForMember(dest=>dest.Age,opt=>
                     opt.MapFrom(src=>src.DateOfBirth.CalculateAge()));
             
+            CreateMap<UserforUpdateDto,User>();
+            
             CreateMap<Photo,PhotoForDetailedDto>();
             CreateMap<PhotoForCreationDto,Photo>();
             CreateMap<Photo,PhotoForReturnDto>();
-            CreateMap<UserforUpdateDto,User>();
+            
+
+            CreateMap<MessageForCreationDto,Message>();
+            CreateMap<Message,MessageForCreationDto>();
+
         }
     }
 }
