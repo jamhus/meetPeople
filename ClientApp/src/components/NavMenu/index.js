@@ -73,6 +73,17 @@ const NavMenu = ({ isLoggedIn, setLogout, photoUrl }) => {
                   </NavLink>
                 </NavItem>
               )}
+              {isLoggedIn && (
+                <NavItem>
+                  <NavLink
+                    tag={RouterNavLink}
+                    className="text-dark"
+                    to="/messages"
+                  >
+                    Messages
+                  </NavLink>
+                </NavItem>
+              )}
 
               {!isLoggedIn && (
                 <NavItem>
