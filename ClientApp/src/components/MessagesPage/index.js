@@ -7,6 +7,8 @@ import { Row, Col, Table, Button, ButtonGroup, Spinner } from "reactstrap";
 
 import { getMessages, clearMessages } from "../../actions";
 
+import "./MessagesPage.css";
+
 const Messages = ({
   userId,
   getMessages,
@@ -26,7 +28,7 @@ const Messages = ({
     return function cleanup() {
       clearMessages();
     };
-  }, [userId, pageNumber, pageSize, container]);
+  }, [userId, pageNumber, pageSize, container, getMessages, clearMessages]);
 
   const renderMessagesFilters = () => {
     return (
@@ -56,6 +58,23 @@ const Messages = ({
     );
   };
 
+  const navigateToUser = (id) => history.push(`/user/${id}`);
+
+  const handleDeleteMessage = (id) => {
+    console.log(id);
+  };
+
+  const renderUserColumn = (name, picUrl) => (
+    <div className="user-column">
+      <img
+        src={picUrl}
+        alt={name}
+        className="img mr-2 img-thumbnail rounded-circle user-thumbnail"
+      />
+      <span>{name}</span>
+    </div>
+  );
+
   const renderTable = () => {
     return loading ? (
       <Col xs="12" md={{ size: 6, offset: 6 }}>
@@ -70,7 +89,7 @@ const Messages = ({
         />
       </Col>
     ) : (
-      <Table striped>
+      <Table striped className="messages-table">
         <thead>
           <tr>
             <th>Message</th>
@@ -78,18 +97,45 @@ const Messages = ({
               {container === "Inbox" || container === "Unread" ? "From" : "To"}
             </th>
             <th>{container === "Inbox" ? "Recieved" : "Sent"}</th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
           {messages.map((message, i) => (
             <tr key={message.id}>
-              <th scope="row">{message.content}</th>
+              <th
+                className="message-content"
+                onClick={() =>
+                  navigateToUser(
+                    container === "Inbox" || container === "Unread"
+                      ? message.senderId
+                      : message.recipientId
+                  )
+                }
+                scope="row"
+              >
+                {message.content}
+              </th>
               <td>
                 {container === "Inbox" || container === "Unread"
-                  ? message.senderKnownAs
-                  : message.recipientKnownAs}
+                  ? renderUserColumn(
+                      message.senderKnownAs,
+                      message.senderPhotoUrl
+                    )
+                  : renderUserColumn(
+                      message.recipientKnownAs,
+                      message.recipientPhotoUrl
+                    )}
               </td>
               <td>{moment(message.dateSent).fromNow()}</td>
+              <td>
+                <Button
+                  onClick={() => handleDeleteMessage(message.id)}
+                  className="btn btn-delete btn-sm btn-danger"
+                >
+                  Delete
+                </Button>
+              </td>
             </tr>
           ))}
         </tbody>

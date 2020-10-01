@@ -1,0 +1,21 @@
+.user-column {
+  display: flex;
+  align-items: center;
+}
+.message-content {
+  cursor: pointer;
+  width: 500px;
+}
+.user-thumbnail {
+  height: 50px;
+  width: 50px;
+}
+
+.messages-table th,
+.messages-table td {
+  vertical-align: middle;
+}
+
+.btn-delete {
+  z-index: 2;
+}
