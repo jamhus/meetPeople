@@ -22,8 +22,15 @@ import {
 
 import { PictureGallery } from "../../common/PictureGallery";
 
-import { getUser, clearUser, sendLike } from "../../../actions";
+import {
+  getUser,
+  clearUser,
+  sendLike,
+  getMessageThread,
+  clearThread,
+} from "../../../actions";
 import "./UserDetailed.css";
+import Conversation from "../../common/Conversation";
 
 const UserDetailed = ({
   getUser,
@@ -33,6 +40,8 @@ const UserDetailed = ({
   userId,
   loading,
   match,
+  getMessageThread,
+  clearThread,
 }) => {
   const [activeTab, setActiveTab] = useState("1");
 
@@ -50,11 +59,24 @@ const UserDetailed = ({
 
   useEffect(() => {
     getUser(match.params.id);
+    getMessageThread(userId, match.params.id);
 
+    if (match.params.tab) {
+      setActiveTab(match.params.tab);
+    }
     return function cleanup() {
       clearUser();
+      clearThread();
     };
-  }, [getUser, clearUser, match.params.id]);
+  }, [
+    getUser,
+    getMessageThread,
+    clearThread,
+    userId,
+    clearUser,
+    match.params.id,
+    match.params.tab,
+  ]);
 
   const infoLabel = (header, text) => (
     <div>
@@ -181,7 +203,10 @@ const UserDetailed = ({
                 <TabPane tabId="4">
                   <Row>
                     <Col className="tab-wrapper" sm="12">
-                      <h4>messages will come soon</h4>
+                      <Conversation
+                        userId={userId}
+                        recipientId={match.params.id}
+                      />
                     </Col>
                   </Row>
                 </TabPane>
@@ -229,6 +254,8 @@ UserDetailed.propTypes = {
   loading: PropTypes.bool.isRequired,
   getUser: PropTypes.func.isRequired,
   clearUser: PropTypes.func.isRequired,
+  clearThread: PropTypes.func.isRequired,
+  getMessageThread: PropTypes.func.isRequired,
   match: PropTypes.shape({
     params: PropTypes.shape({
       id: PropTypes.string.isRequired,
@@ -245,7 +272,10 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   getUser: (id) => dispatch(getUser(id)),
   clearUser: () => dispatch(clearUser()),
+  clearThread: () => dispatch(clearThread()),
   sendLike: (userId, recipient) => dispatch(sendLike(userId, recipient)),
+  getMessageThread: (userId, recipientId) =>
+    dispatch(getMessageThread(userId, recipientId)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(UserDetailed);

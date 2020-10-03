@@ -58,7 +58,7 @@ const Messages = ({
     );
   };
 
-  const navigateToUser = (id) => history.push(`/user/${id}`);
+  const navigateToUser = (id) => history.push(`/user/${id}/4`);
 
   const handleDeleteMessage = (id) => {
     console.log(id);

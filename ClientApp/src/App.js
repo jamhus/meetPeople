@@ -43,7 +43,11 @@ const App = ({ getCurrentUser }) => {
           <Route path="/register" component={RegisterPage} />
           <ProtectedRoute exact path="/users" component={UsersPage} />
           <ProtectedRoute exact path="/edit-profile" component={EditPage} />
-          <ProtectedRoute exact path="/user/:id" component={UserDetailed} />
+          <ProtectedRoute
+            exact
+            path="/user/:id/:tab?"
+            component={UserDetailed}
+          />
           <ProtectedRoute exact path="/messages" component={MessagesPage} />
           <Route path="/404" component={NotFoundPage} />
           <Redirect to="/404" />

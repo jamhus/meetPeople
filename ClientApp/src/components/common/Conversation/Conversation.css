@@ -1,0 +1,21 @@
+.chat {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.chat li {
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px dotted #b3a9a9;
+}
+
+.chat img {
+  height: 50px;
+  width: 50px;
+}
+
+.chat-body {
+  display: flex;
+  flex-direction: column;
+}
