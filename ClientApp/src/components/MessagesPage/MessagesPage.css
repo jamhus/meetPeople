@@ -19,3 +19,14 @@
 .btn-delete {
   z-index: 2;
 }
+
+.prompt-ui {
+  padding: 25px;
+  border-radius: 8px;
+  background: white;
+  border: 1px solid #555;
+}
+
+.react-confirm-alert-overlay {
+  background: rgba(51, 51, 51, 0.3) !important;
+}

@@ -121,13 +121,13 @@ namespace meetPeople.Repositories
 
             switch(messageParams.MessageContainer){
                 case "Inbox":
-                    messages = messages.Where(u=>u.RecipientId==messageParams.UserId);
+                    messages = messages.Where(u=>u.RecipientId==messageParams.UserId && u.RecipientDeleted == false);
                 break;
                 case "Outbox":
-                    messages = messages.Where(u=>u.SenderId==messageParams.UserId);
+                    messages = messages.Where(u=>u.SenderId==messageParams.UserId && u.SenderDeleted == false);
                 break;
                 default:
-                    messages = messages.Where(u=>u.RecipientId == messageParams.UserId && u.IsRead ==false);
+                    messages = messages.Where(u=>u.RecipientId == messageParams.UserId && u.IsRead == false && u.RecipientDeleted == false);
                 break;
             }
 
@@ -140,8 +140,9 @@ namespace meetPeople.Repositories
             var messages = await _context.Messages
             .Include(u=>u.Sender).ThenInclude(u=>u.Photos)
             .Include(u=>u.Recipient).ThenInclude(u=>u.Photos)
-            .Where(u=> u.SenderId == recipientId && u.RecipientId == userId 
-            || u.SenderId == userId && u.RecipientId == recipientId ).OrderByDescending(u=>u.DateSent).ToListAsync();
+            .Where(u=> u.RecipientId == userId && u.RecipientDeleted == false
+            && u.SenderId == recipientId 
+            || u.RecipientId == recipientId  && u.SenderId == userId && u.SenderDeleted == false).OrderByDescending(u=>u.DateSent).ToListAsync();
 
             return messages;
         }

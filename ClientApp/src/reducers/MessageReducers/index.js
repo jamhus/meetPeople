@@ -41,6 +41,15 @@ const Messages = (state = defaultState, action) => {
         ...state,
         messageThread: [action.message, ...state.messageThread],
       };
+    case MESSAGE_CONSTANTS.DELETE_MESSAGE:
+      const messages = state.messagesContainer.filter(
+        (x) => x.id !== action.messageId
+      );
+
+      return {
+        ...state,
+        messagesContainer: [...messages],
+      };
     default:
       return state;
   }

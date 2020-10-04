@@ -10,6 +10,7 @@ import registerServiceWorker from "./registerServiceWorker";
 import { composeWithDevTools } from "redux-devtools-extension";
 
 import App from "./App";
+import "react-confirm-alert/src/react-confirm-alert.css"; // Import css
 
 const baseUrl = document.getElementsByTagName("base")[0].getAttribute("href");
 const rootElement = document.getElementById("root");

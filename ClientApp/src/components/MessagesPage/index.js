@@ -2,10 +2,11 @@ import React, { useEffect, useState } from "react";
 import moment from "moment";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
+import { confirmAlert } from "react-confirm-alert";
 import { PaginationBar } from "../common/PaginationBar";
 import { Row, Col, Table, Button, ButtonGroup, Spinner } from "reactstrap";
 
-import { getMessages, clearMessages } from "../../actions";
+import { getMessages, clearMessages, deleteMessage } from "../../actions";
 
 import "./MessagesPage.css";
 
@@ -17,6 +18,7 @@ const Messages = ({
   loading,
   history,
   paginationProps,
+  deleteMessage,
 }) => {
   const [pageSize, setPageSize] = useState(10);
   const [pageNumber, setPageNumber] = useState(1);
@@ -29,6 +31,35 @@ const Messages = ({
       clearMessages();
     };
   }, [userId, pageNumber, pageSize, container, getMessages, clearMessages]);
+
+  const handleDeleteMessage = (messageId) => {
+    confirmAlert({
+      customUI: ({ onClose }) => {
+        return (
+          <div className="prompt-ui">
+            <h3 className="prompt-header text-danger">Are you sure?</h3>
+            <p className="prompt-content text-danger">
+              You want to delete this message?
+            </p>
+            <ButtonGroup className="d-flex">
+              <Button className="w-100 btn-primary" onClick={onClose}>
+                No
+              </Button>
+              <Button
+                className="w-100 btn-danger"
+                onClick={() => {
+                  deleteMessage(userId, messageId);
+                  onClose();
+                }}
+              >
+                Yes
+              </Button>
+            </ButtonGroup>
+          </div>
+        );
+      },
+    });
+  };
 
   const renderMessagesFilters = () => {
     return (
@@ -59,10 +90,6 @@ const Messages = ({
   };
 
   const navigateToUser = (id) => history.push(`/user/${id}/4`);
-
-  const handleDeleteMessage = (id) => {
-    console.log(id);
-  };
 
   const renderUserColumn = (name, picUrl) => (
     <div className="user-column">
@@ -184,6 +211,7 @@ Messages.propTypes = {
   history: PropTypes.any.isRequired,
   getMessages: PropTypes.func.isRequired,
   clearMessages: PropTypes.func.isRequired,
+  deleteMessage: PropTypes.func.isRequired,
 
   paginationProps: PropTypes.shape({
     totalPages: PropTypes.number,
@@ -204,6 +232,8 @@ const mapDispatchToProps = (dispatch) => ({
   getMessages: (userId, container, pageNumber, pageSize) =>
     dispatch(getMessages(userId, container, pageNumber, pageSize)),
   clearMessages: () => dispatch(clearMessages()),
+  deleteMessage: (userId, messageId) =>
+    dispatch(deleteMessage(userId, messageId)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Messages);

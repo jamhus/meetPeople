@@ -7,15 +7,22 @@ export const MESSAGE_CONSTANTS = {
   CLEAR_THREAD: "CLEAR_THREAD",
   CLEAR_MESSAGES: "CLEAR_MESSAGES",
   SEND_MESSAGE: "SEND_MESSAGE",
+  DELETE_MESSAGE: "DELETE_MESSAGE",
 };
 
 export const fetctGetMessageThread = (thread) => ({
   type: MESSAGE_CONSTANTS.GET_MESSAGE_THREAD,
   thread,
 });
+
 export const fetchSendMessage = (message) => ({
   type: MESSAGE_CONSTANTS.SEND_MESSAGE,
   message,
+});
+
+export const fetchDeleteMessage = (messageId) => ({
+  type: MESSAGE_CONSTANTS.DELETE_MESSAGE,
+  messageId,
 });
 
 export const fetctGetMessages = (messages) => ({
@@ -120,6 +127,31 @@ export const sendMessage = (userId, message) => async (dispatch) => {
       requestOptions
     ).then((res) => res.json());
     dispatch(fetchSendMessage(data));
+  } catch (error) {
+    console.log(error);
+  }
+  dispatch(toggleLoading(false));
+};
+
+export const deleteMessage = (userId, messageId) => async (dispatch) => {
+  dispatch(toggleLoading(true));
+  var myHeaders = new Headers();
+
+  const token = JSON.parse(Cookies.get("token"))["token"];
+
+  myHeaders.append("Authorization", `Bearer ${token}`);
+  myHeaders.append("Content-Type", "application/json");
+
+  var requestOptions = {
+    method: "POST",
+    headers: myHeaders,
+    body: JSON.stringify({}),
+    redirect: "follow",
+  };
+
+  try {
+    await fetch(`/api/users/${userId}/messages/${messageId}`, requestOptions);
+    dispatch(fetchDeleteMessage(messageId));
   } catch (error) {
     console.log(error);
   }
