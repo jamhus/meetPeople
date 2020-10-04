@@ -6,11 +6,16 @@ export const MESSAGE_CONSTANTS = {
   GET_MESSAGES: "GET_MESSAGES",
   CLEAR_THREAD: "CLEAR_THREAD",
   CLEAR_MESSAGES: "CLEAR_MESSAGES",
+  SEND_MESSAGE: "SEND_MESSAGE",
 };
 
 export const fetctGetMessageThread = (thread) => ({
   type: MESSAGE_CONSTANTS.GET_MESSAGE_THREAD,
   thread,
+});
+export const fetchSendMessage = (message) => ({
+  type: MESSAGE_CONSTANTS.SEND_MESSAGE,
+  message,
 });
 
 export const fetctGetMessages = (messages) => ({
@@ -84,6 +89,37 @@ export const getMessages = (userId, container, pageNumber, pageSize) => async (
       paginationProps,
     };
     dispatch(fetctGetMessages(usersResult));
+  } catch (error) {
+    console.log(error);
+  }
+  dispatch(toggleLoading(false));
+};
+
+export const sendMessage = (userId, message) => async (dispatch) => {
+  dispatch(toggleLoading(true));
+  var myHeaders = new Headers();
+
+  const token = JSON.parse(Cookies.get("token"))["token"];
+
+  myHeaders.append("Authorization", `Bearer ${token}`);
+  myHeaders.append("Content-Type", "application/json");
+
+  var requestOptions = {
+    method: "POST",
+    headers: myHeaders,
+    body: JSON.stringify({
+      recipientId: message.recipientId,
+      content: message.content,
+    }),
+    redirect: "follow",
+  };
+
+  try {
+    const data = await fetch(
+      `/api/users/${userId}/messages/`,
+      requestOptions
+    ).then((res) => res.json());
+    dispatch(fetchSendMessage(data));
   } catch (error) {
     console.log(error);
   }

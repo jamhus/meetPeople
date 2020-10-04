@@ -11,7 +11,7 @@ const defaultState = {
   },
 };
 
-const toaster = (state = defaultState, action) => {
+const Messages = (state = defaultState, action) => {
   switch (action.type) {
     case MESSAGE_CONSTANTS.GET_MESSAGES:
       return {
@@ -36,9 +36,14 @@ const toaster = (state = defaultState, action) => {
         ...state,
         messagesContainer: [],
       };
+    case MESSAGE_CONSTANTS.SEND_MESSAGE:
+      return {
+        ...state,
+        messageThread: [action.message, ...state.messageThread],
+      };
     default:
       return state;
   }
 };
 
-export default toaster;
+export default Messages;

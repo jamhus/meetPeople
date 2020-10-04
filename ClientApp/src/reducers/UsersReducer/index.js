@@ -10,7 +10,7 @@ const defaultState = {
     itemsPerPage: 0,
   },
 };
-const Authentication = (state = defaultState, action) => {
+const Users = (state = defaultState, action) => {
   switch (action.type) {
     case USERS_CONSTANTS.FETCH_USERS:
       return {
@@ -33,4 +33,4 @@ const Authentication = (state = defaultState, action) => {
   }
 };
 
-export default Authentication;
+export default Users;

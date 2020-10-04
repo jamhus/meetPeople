@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { faClock } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { sendMessage } from "../../../actions";
 import moment from "moment";
 
 import "./Conversation.css";
@@ -18,7 +19,28 @@ import {
   InputGroup,
   CardFooter,
 } from "reactstrap";
-const Conversation = ({ userId, recipientId, loading, thread }) => {
+const Conversation = ({
+  userId,
+  recipientId,
+  loading,
+  thread,
+  sendMessage,
+}) => {
+  const [content, setContent] = useState("");
+
+  const handleSendMessage = () => {
+    const message = {
+      recipientId,
+      content,
+    };
+    return sendMessage(userId, message);
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      handleSendMessage();
+    }
+  };
   const renderConversation = () => {
     return loading ? (
       <Spinner
@@ -101,8 +123,16 @@ const Conversation = ({ userId, recipientId, loading, thread }) => {
 
         <CardFooter>
           <InputGroup>
-            <Input className="mr-1" placeholder="send a private message" />
-            <Button className="btn btn-primary">Send</Button>
+            <Input
+              onKeyDown={handleKeyDown}
+              className="mr-1"
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              placeholder="send a private message"
+            />
+            <Button onClick={handleSendMessage} className="btn btn-primary">
+              Send
+            </Button>
           </InputGroup>
         </CardFooter>
       </Card>
@@ -134,6 +164,7 @@ Conversation.propTypes = {
   loading: PropTypes.bool.isRequired,
   userId: PropTypes.number.isRequired,
   recipientId: PropTypes.string.isRequired,
+  sendMessage: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
@@ -141,6 +172,8 @@ const mapStateToProps = (state) => ({
   thread: state.messages.messageThread,
 });
 
-const mapDispatchToProps = (dispatch) => ({});
+const mapDispatchToProps = (dispatch) => ({
+  sendMessage: (userId, message) => dispatch(sendMessage(userId, message)),
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(Conversation);
