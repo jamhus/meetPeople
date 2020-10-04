@@ -124,7 +124,12 @@ const UserDetailed = ({
                 <Button onClick={handleLike} className="w-100 btn-primary">
                   Like
                 </Button>
-                <Button className="w-100 btn-success">Message</Button>
+                <Button
+                  onClick={(e) => toggle("4")}
+                  className="w-100 btn-success"
+                >
+                  Message
+                </Button>
               </ButtonGroup>
             </CardFooter>
           </Card>
