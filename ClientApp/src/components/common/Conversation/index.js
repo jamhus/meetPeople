@@ -164,7 +164,7 @@ Conversation.propTypes = {
       recipientKnownAs: PropTypes.string,
       content: PropTypes.string,
       isRead: PropTypes.bool,
-      dateRead: PropTypes.oneOf([PropTypes.string, null]),
+      dateRead: PropTypes.string,
       dateSent: PropTypes.string,
     })
   ).isRequired,
