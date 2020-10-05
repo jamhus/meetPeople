@@ -1,7 +1,11 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { faClock } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCheck,
+  faPaperPlane,
+  faEnvelope,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { sendMessage } from "../../../actions";
 import moment from "moment";
@@ -74,7 +78,7 @@ const Conversation = ({
                           {message.senderKnownAs}
                         </strong>
                         <small className="text-muted float-left">
-                          <FontAwesomeIcon icon={faClock} />{" "}
+                          <FontAwesomeIcon icon={faPaperPlane} />{" "}
                           {moment(message.dateSent).fromNow()}
                         </small>
                       </div>
@@ -97,13 +101,16 @@ const Conversation = ({
                     <div className="chat-body">
                       <div className="header">
                         <small className="text-muted float-right">
-                          <FontAwesomeIcon icon={faClock} />{" "}
+                          <FontAwesomeIcon icon={faEnvelope} />{" "}
                           {moment(message.dateSent).fromNow()}
                           {!message.isRead && (
-                            <span className="mx-2 text-danger">Unread</span>
+                            <span className="mx-2 text-danger ml-1">
+                              Unread
+                            </span>
                           )}
                           {message.isRead && (
-                            <span className="text-danger">
+                            <span className="text-danger ml-1">
+                              <FontAwesomeIcon icon={faCheck} />{" "}
                               {moment(message.dateRead).fromNow()}
                             </span>
                           )}

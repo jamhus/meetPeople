@@ -94,13 +94,22 @@ namespace meetPeople.Controllers
             }
 
             var messagesFromRepo = await _repo.GetMessageThread(userId,recipientId);
+
+             foreach (var message in messagesFromRepo)
+            {
+                if(message.IsRead != true) {
+                    message.IsRead = true;
+                    message.DateRead = DateTime.Now;
+                    await _repo.SaveAll();
+                }
+            }
+
             var messagesThread = _mapper.Map<IEnumerable<MessageToReturnDto>>(messagesFromRepo);
 
             return Ok(messagesThread);
         }
 
         [HttpPost("{id}")]
-
         public async Task<IActionResult> DeleteMessage (int id,int userId) {
 
             if(userId!= int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value)){
@@ -128,5 +137,7 @@ namespace meetPeople.Controllers
             throw new Exception("Error while deleting message");
 
         }
+
     }
+    
 }
