@@ -1,4 +1,7 @@
 import React, { useEffect, useState } from "react";
+import Cookies from "js-cookie";
+
+import * as SignalR from "@microsoft/signalr";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import moment from "moment";
@@ -45,6 +48,24 @@ const UserDetailed = ({
 }) => {
   const [activeTab, setActiveTab] = useState("1");
 
+  const token = `Bearer ${JSON.parse(Cookies.get("token"))["token"]}`;
+
+  const connection = new SignalR.HubConnectionBuilder()
+    .withUrl("/chat", {
+      accessTokenFactory: () => token,
+    })
+    .configureLogging(SignalR.LogLevel.Information)
+    .build();
+  connection
+    .start()
+    .then(() => {
+      console.log(connection);
+      if (connection.connectionId) {
+        connection.invoke("sendConnectionId", connection.connectionId);
+      }
+    })
+    .catch((error) => console.log("Error establishing connection: ", error));
+
   const toggle = (tab) => {
     if (activeTab !== tab) setActiveTab(tab);
   };
@@ -60,6 +81,10 @@ const UserDetailed = ({
   useEffect(() => {
     getUser(match.params.id);
     getMessageThread(userId, match.params.id);
+
+    connection.on("sendToReact", (message) => {
+      console.log(message);
+    });
 
     if (match.params.tab) {
       setActiveTab(match.params.tab);

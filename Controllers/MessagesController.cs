@@ -10,6 +10,9 @@ using AutoMapper;
 using System.Security.Claims;
 using meetPeople.Interfaces;
 using meetPeople.Dtos;
+using Microsoft.AspNetCore.SignalR;
+using meetPeople.Hubs;
+using System.Diagnostics.CodeAnalysis;
 
 namespace meetPeople.Controllers
 {
@@ -21,10 +24,12 @@ namespace meetPeople.Controllers
     {
         private readonly IMeetPeopleRepository _repo;
         private readonly IMapper _mapper;
-        public MessagesController(IMeetPeopleRepository repo, IMapper mapper)
+        private readonly  IHubContext<ChatHub> _chatHub;
+        public MessagesController(IMeetPeopleRepository repo, IMapper mapper,[NotNull] IHubContext<ChatHub> chatHub)
         {
             _mapper = mapper;
             _repo = repo;
+            _chatHub = chatHub;
         }
 
         [HttpGet("{id}",Name="GetMessage")]
@@ -79,6 +84,8 @@ namespace meetPeople.Controllers
             
             if(await _repo.SaveAll()){
                 var messageToReturn = _mapper.Map<MessageToReturnDto>(message);
+                 await _chatHub.Clients.User(recipient.Id.ToString()).SendAsync("sendToReact", messageToReturn );
+
                 return CreatedAtRoute("GetMessage",
                 new {userId,id = message.Id},messageToReturn);
             }

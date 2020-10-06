@@ -1,16 +1,20 @@
 using System.Net;
+using System.Security.Claims;
 using System.Text;
+using System.Threading.Tasks;
 using AutoMapper;
 using meetPeople.Data;
 using meetPeople.Helpers;
+using meetPeople.Hubs;
 using meetPeople.Interfaces;
 using meetPeople.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -32,6 +36,19 @@ namespace meetPeople
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
+            services.AddCors(opt =>
+            {
+                opt.AddPolicy("CorsPolicy", policy =>
+                {
+                    policy
+                        .AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .WithOrigins("http://localhost:4742")
+                        .AllowCredentials();
+                });
+            });
+
             services.AddDbContext<DataContext>(x=> x.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddControllersWithViews().AddNewtonsoftJson(opt=>
@@ -45,6 +62,8 @@ namespace meetPeople
                 configuration.RootPath = "ClientApp/build";
             });
 
+            services.AddSignalR();
+
             services.Configure<CloudinarySettings>(Configuration.GetSection("CloudinarySettings"));
 
             services.AddAutoMapper(typeof(MeetPeopleRepository).Assembly);
@@ -52,17 +71,31 @@ namespace meetPeople
             services.AddScoped<IAuthRepository,AuthRepository>();
 
             services.AddScoped<IMeetPeopleRepository,MeetPeopleRepository>();
-            
+
+              services.AddAuthorization(options =>
+            {
+                options.AddPolicy(JwtBearerDefaults.AuthenticationScheme, policy =>
+                {
+                    policy.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme);
+                    policy.RequireClaim(ClaimTypes.NameIdentifier);
+                });
+            });
+       
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddJwtBearer(options => {
-                options.TokenValidationParameters = new TokenValidationParameters
+            .AddJwtBearer(options =>
+            {
+             options.TokenValidationParameters = new TokenValidationParameters
             {
                 ValidateIssuerSigningKey = true,
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration.GetSection("AppSettings:Token").Value)),
                 ValidateIssuer = false,
                 ValidateAudience = false
             };
-            });
+            
+        });
+
+            
+            services.AddSingleton<IUserIdProvider, NameUserIdProvider>();
 
             services.AddScoped<LogUserActivity>();
         }
@@ -89,11 +122,15 @@ namespace meetPeople
             app.UseSpaStaticFiles();
 
             app.UseRouting();
+            
+            app.UseCors("CorsPolicy");
+
             app.UseAuthentication();
             app.UseAuthorization();
-
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapHub<ChatHub>("/chat");
+
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller}/{action=Index}/{id?}");
