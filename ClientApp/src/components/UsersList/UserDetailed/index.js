@@ -72,6 +72,12 @@ const UserDetailed = ({
         message
       );
   };
+  useEffect(() => {
+    return () => {
+      console.log("bye");
+      setHubConnection(null);
+    };
+  }, []);
 
   useEffect(() => {
     getUser(match.params.id);
@@ -81,8 +87,6 @@ const UserDetailed = ({
       // Build new Hub Connection, url is currently hard coded.
       const hubConnect = new SignalR.HubConnectionBuilder()
         .withUrl("/chat")
-        .withAutomaticReconnect()
-        .configureLogging(SignalR.LogLevel.Information)
         .build();
 
       if (!online) {
@@ -96,7 +100,7 @@ const UserDetailed = ({
       }
     };
 
-    if (online) {
+    if (hubConnection && online) {
       hubConnection.invoke("SayImLogedIn", userId);
 
       hubConnection.on("SendUserList", (users) => {
@@ -106,6 +110,9 @@ const UserDetailed = ({
       hubConnection.on("SendMessageToUser", (message) => {
         fetchRecieveMessage(message);
       });
+      hubConnection.on("UserDisConnected", (connectionId) => {
+        console.log("UserDisConnected", connectionId);
+      });
     }
 
     createHubConnection();
@@ -113,7 +120,8 @@ const UserDetailed = ({
     if (match.params.tab) {
       setActiveTab(match.params.tab);
     }
-    return function cleanup() {
+
+    return () => {
       clearUser();
       clearThread();
     };
