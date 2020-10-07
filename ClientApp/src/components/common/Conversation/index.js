@@ -29,19 +29,24 @@ const Conversation = ({
   loading,
   thread,
   sendMessage,
+  sendMessageInRealTime,
 }) => {
   const [content, setContent] = useState("");
 
-  const handleSendMessage = () => {
-    const message = {
+  const handleSendMessage = async () => {
+    const params = {
       recipientId,
       content,
     };
-    return sendMessage(userId, message);
+
+    const message = await sendMessage(userId, params);
+    return sendMessageInRealTime(message);
   };
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
+      e.preventDefault();
+
       handleSendMessage();
     }
   };
@@ -171,6 +176,7 @@ Conversation.propTypes = {
   loading: PropTypes.bool.isRequired,
   userId: PropTypes.number.isRequired,
   recipientId: PropTypes.string.isRequired,
+  sendMessageInRealTime: PropTypes.func.isRequired,
   sendMessage: PropTypes.func.isRequired,
 };
 

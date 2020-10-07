@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import * as SignalR from "@microsoft/signalr";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import moment from "moment";
@@ -28,6 +29,7 @@ import {
   sendLike,
   getMessageThread,
   clearThread,
+  fetchRecieveMessage,
 } from "../../../actions";
 import "./UserDetailed.css";
 import Conversation from "../../common/Conversation";
@@ -42,8 +44,12 @@ const UserDetailed = ({
   match,
   getMessageThread,
   clearThread,
+  fetchRecieveMessage,
 }) => {
   const [activeTab, setActiveTab] = useState("1");
+  const [hubConnection, setHubConnection] = useState({});
+  const [onlineUsers, setOnlineUsers] = useState([]);
+  const [online, setOnline] = useState(false);
 
   const toggle = (tab) => {
     if (activeTab !== tab) setActiveTab(tab);
@@ -57,9 +63,52 @@ const UserDetailed = ({
     return sendLike(userId, recipient);
   };
 
+  const sendMessageInRealTime = (message) => {
+    const userConnected = onlineUsers.find((x) => x.userId === user.id);
+    userConnected &&
+      hubConnection.invoke(
+        "SendMessageToUser",
+        userConnected.connectionId,
+        message
+      );
+  };
+
   useEffect(() => {
     getUser(match.params.id);
     getMessageThread(userId, match.params.id);
+
+    const createHubConnection = async () => {
+      // Build new Hub Connection, url is currently hard coded.
+      const hubConnect = new SignalR.HubConnectionBuilder()
+        .withUrl("/chat")
+        .withAutomaticReconnect()
+        .configureLogging(SignalR.LogLevel.Information)
+        .build();
+
+      if (!online) {
+        try {
+          await hubConnect.start();
+          setHubConnection(hubConnect);
+          setOnline(true);
+        } catch (err) {
+          alert(err);
+        }
+      }
+    };
+
+    if (online) {
+      hubConnection.invoke("SayImLogedIn", userId);
+
+      hubConnection.on("SendUserList", (users) => {
+        setOnlineUsers(users);
+      });
+
+      hubConnection.on("SendMessageToUser", (message) => {
+        fetchRecieveMessage(message);
+      });
+    }
+
+    createHubConnection();
 
     if (match.params.tab) {
       setActiveTab(match.params.tab);
@@ -76,6 +125,9 @@ const UserDetailed = ({
     clearUser,
     match.params.id,
     match.params.tab,
+    online,
+    setOnline,
+    fetchRecieveMessage,
   ]);
 
   const infoLabel = (header, text) => (
@@ -87,6 +139,7 @@ const UserDetailed = ({
 
   const renderUserProfile = () => {
     const photos = user && user.photos ? user.photos : [];
+
     return loading ? (
       <Col xs="12" md={{ size: 6, offset: 6 }}>
         {" "}
@@ -211,6 +264,7 @@ const UserDetailed = ({
                       <Conversation
                         userId={userId}
                         recipientId={match.params.id}
+                        sendMessageInRealTime={sendMessageInRealTime}
                       />
                     </Col>
                   </Row>
@@ -261,6 +315,7 @@ UserDetailed.propTypes = {
   clearUser: PropTypes.func.isRequired,
   clearThread: PropTypes.func.isRequired,
   getMessageThread: PropTypes.func.isRequired,
+  fetchRecieveMessage: PropTypes.func.isRequired,
   match: PropTypes.shape({
     params: PropTypes.shape({
       id: PropTypes.string.isRequired,
@@ -279,6 +334,7 @@ const mapDispatchToProps = (dispatch) => ({
   clearUser: () => dispatch(clearUser()),
   clearThread: () => dispatch(clearThread()),
   sendLike: (userId, recipient) => dispatch(sendLike(userId, recipient)),
+  fetchRecieveMessage: (message) => dispatch(fetchRecieveMessage(message)),
   getMessageThread: (userId, recipientId) =>
     dispatch(getMessageThread(userId, recipientId)),
 });
