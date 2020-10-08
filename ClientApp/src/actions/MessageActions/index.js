@@ -4,6 +4,7 @@ import { toggleLoading } from "../LoadingActions";
 export const MESSAGE_CONSTANTS = {
   GET_MESSAGE_THREAD: "GET_MESSAGE_THREAD",
   GET_MESSAGES: "GET_MESSAGES",
+  RECIEVE_MESSAGE: "RECIEVE_MESSAGE",
   CLEAR_THREAD: "CLEAR_THREAD",
   CLEAR_MESSAGES: "CLEAR_MESSAGES",
   SEND_MESSAGE: "SEND_MESSAGE",
@@ -16,6 +17,11 @@ export const fetctGetMessageThread = (thread) => ({
 });
 
 export const fetchSendMessage = (message) => ({
+  type: MESSAGE_CONSTANTS.SEND_MESSAGE,
+  message,
+});
+
+export const fetchRecieveMessage = (message) => ({
   type: MESSAGE_CONSTANTS.SEND_MESSAGE,
   message,
 });
@@ -106,6 +112,7 @@ export const sendMessage = (userId, message) => async (dispatch) => {
   dispatch(toggleLoading(true));
   var myHeaders = new Headers();
 
+  let messageToReturn = {};
   const token = JSON.parse(Cookies.get("token"))["token"];
 
   myHeaders.append("Authorization", `Bearer ${token}`);
@@ -117,6 +124,7 @@ export const sendMessage = (userId, message) => async (dispatch) => {
     body: JSON.stringify({
       recipientId: message.recipientId,
       content: message.content,
+      connectionId: message.connectionId,
     }),
     redirect: "follow",
   };
@@ -126,11 +134,13 @@ export const sendMessage = (userId, message) => async (dispatch) => {
       `/api/users/${userId}/messages/`,
       requestOptions
     ).then((res) => res.json());
+    messageToReturn = data;
     dispatch(fetchSendMessage(data));
   } catch (error) {
     console.log(error);
   }
   dispatch(toggleLoading(false));
+  return messageToReturn;
 };
 
 export const deleteMessage = (userId, messageId) => async (dispatch) => {

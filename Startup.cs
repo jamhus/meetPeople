@@ -3,6 +3,7 @@ using System.Text;
 using AutoMapper;
 using meetPeople.Data;
 using meetPeople.Helpers;
+using meetPeople.Hubs;
 using meetPeople.Interfaces;
 using meetPeople.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -10,7 +11,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -65,6 +65,8 @@ namespace meetPeople
             });
 
             services.AddScoped<LogUserActivity>();
+
+            services.AddSignalR();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -94,6 +96,7 @@ namespace meetPeople
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapHub<MessageHub>("/chat");
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller}/{action=Index}/{id?}");

@@ -20,6 +20,9 @@ import {
   ButtonGroup,
 } from "reactstrap";
 
+import { faCircle } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
 import { PictureGallery } from "../../common/PictureGallery";
 
 import {
@@ -42,6 +45,7 @@ const UserDetailed = ({
   match,
   getMessageThread,
   clearThread,
+  userOnline,
 }) => {
   const [activeTab, setActiveTab] = useState("1");
 
@@ -108,6 +112,11 @@ const UserDetailed = ({
               src={user.photoUrl}
             />
             <CardBody className="card-body-alt">
+              {userOnline && (
+                <span className="user-detailed-online text-success">
+                  <FontAwesomeIcon icon={faCircle} />{" "}
+                </span>
+              )}
               {infoLabel("Location:", `${user.city} , ${user.country}`)}
               {infoLabel("Age:", `${user.age}`)}
               {infoLabel(
@@ -261,6 +270,7 @@ UserDetailed.propTypes = {
   clearUser: PropTypes.func.isRequired,
   clearThread: PropTypes.func.isRequired,
   getMessageThread: PropTypes.func.isRequired,
+  userOnline: PropTypes.bool.isRequired,
   match: PropTypes.shape({
     params: PropTypes.shape({
       id: PropTypes.string.isRequired,
@@ -268,11 +278,17 @@ UserDetailed.propTypes = {
   }),
 };
 
-const mapStateToProps = (state) => ({
-  user: state.users.userDetailed,
-  loading: state.loading.loading,
-  userId: state.authentication.user.id,
-});
+const mapStateToProps = (state) => {
+  const online = state.users.onlineUsers.find(
+    (x) => x.userId === state.users.userDetailed.id
+  );
+  return {
+    user: state.users.userDetailed,
+    loading: state.loading.loading,
+    userId: state.authentication.user.id,
+    userOnline: online ? true : false,
+  };
+};
 
 const mapDispatchToProps = (dispatch) => ({
   getUser: (id) => dispatch(getUser(id)),

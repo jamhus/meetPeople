@@ -29,19 +29,30 @@ const Conversation = ({
   loading,
   thread,
   sendMessage,
+  onlineUsers,
 }) => {
   const [content, setContent] = useState("");
 
-  const handleSendMessage = () => {
-    const message = {
+  const handleSendMessage = async () => {
+    const onlineUser = onlineUsers.find(
+      (x) => x.userId.toString() === recipientId
+    );
+    console.log(onlineUsers, recipientId);
+    const connectionId =
+      (onlineUser && onlineUser.connectionId && onlineUser.connectionId) || "";
+    const params = {
       recipientId,
       content,
+      connectionId,
     };
-    return sendMessage(userId, message);
+
+    return await sendMessage(userId, params);
   };
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
+      e.preventDefault();
+
       handleSendMessage();
     }
   };
@@ -168,6 +179,12 @@ Conversation.propTypes = {
       dateSent: PropTypes.string,
     })
   ).isRequired,
+  onlineUsers: PropTypes.arrayOf(
+    PropTypes.shape({
+      userId: PropTypes.number,
+      connectionId: PropTypes.string,
+    })
+  ).isRequired,
   loading: PropTypes.bool.isRequired,
   userId: PropTypes.number.isRequired,
   recipientId: PropTypes.string.isRequired,
@@ -177,6 +194,7 @@ Conversation.propTypes = {
 const mapStateToProps = (state) => ({
   loading: state.loading.loading,
   thread: state.messages.messageThread,
+  onlineUsers: state.users.onlineUsers,
 });
 
 const mapDispatchToProps = (dispatch) => ({

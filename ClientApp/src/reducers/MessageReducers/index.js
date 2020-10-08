@@ -1,6 +1,7 @@
-import { MESSAGE_CONSTANTS } from "../../actions";
+import { MESSAGE_CONSTANTS, USERS_CONSTANTS } from "../../actions";
 
 const defaultState = {
+  currentMessageThread: "",
   messagesContainer: [],
   messageThread: [],
   paginationProps: {
@@ -41,15 +42,39 @@ const Messages = (state = defaultState, action) => {
         ...state,
         messageThread: [action.message, ...state.messageThread],
       };
+
+    case MESSAGE_CONSTANTS.RECIEVE_MESSAGE:
+      if (state.currentMessageThread === action.message.senderId) {
+        return {
+          ...state,
+          messageThread: [action.message, ...state.messageThread],
+        };
+      }
+      return {
+        ...state,
+      };
+
     case MESSAGE_CONSTANTS.DELETE_MESSAGE:
       const messages = state.messagesContainer.filter(
         (x) => x.id !== action.messageId
       );
-
       return {
         ...state,
         messagesContainer: [...messages],
       };
+
+    case USERS_CONSTANTS.FETCH_USER:
+      return {
+        ...state,
+        currentMessageThread: action.user.id,
+      };
+
+    case USERS_CONSTANTS.CLEAR_USER:
+      return {
+        ...state,
+        currentMessageThread: "",
+      };
+
     default:
       return state;
   }
