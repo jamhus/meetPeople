@@ -29,18 +29,24 @@ const Conversation = ({
   loading,
   thread,
   sendMessage,
-  sendMessageInRealTime,
+  onlineUsers,
 }) => {
   const [content, setContent] = useState("");
 
   const handleSendMessage = async () => {
+    const onlineUser = onlineUsers.find(
+      (x) => x.userId.toString() === recipientId
+    );
+    console.log(onlineUsers, recipientId);
+    const connectionId =
+      (onlineUser && onlineUser.connectionId && onlineUser.connectionId) || "";
     const params = {
       recipientId,
       content,
+      connectionId,
     };
 
-    const message = await sendMessage(userId, params);
-    return sendMessageInRealTime(message);
+    return await sendMessage(userId, params);
   };
 
   const handleKeyDown = (e) => {
@@ -173,16 +179,22 @@ Conversation.propTypes = {
       dateSent: PropTypes.string,
     })
   ).isRequired,
+  onlineUsers: PropTypes.arrayOf(
+    PropTypes.shape({
+      userId: PropTypes.number,
+      connectionId: PropTypes.string,
+    })
+  ).isRequired,
   loading: PropTypes.bool.isRequired,
   userId: PropTypes.number.isRequired,
   recipientId: PropTypes.string.isRequired,
-  sendMessageInRealTime: PropTypes.func.isRequired,
   sendMessage: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
   loading: state.loading.loading,
   thread: state.messages.messageThread,
+  onlineUsers: state.users.onlineUsers,
 });
 
 const mapDispatchToProps = (dispatch) => ({

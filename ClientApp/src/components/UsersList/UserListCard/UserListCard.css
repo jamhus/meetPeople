@@ -32,3 +32,10 @@
 .animate {
   transition: all 0.3s ease-in-out;
 }
+
+.user-list-online {
+  position: absolute;
+  z-index: 1;
+  bottom: 3px;
+  left: 5px;
+}

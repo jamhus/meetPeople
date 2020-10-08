@@ -16,6 +16,7 @@ const UsersList = ({
   history,
   paginationProps,
   sendLike,
+  onlineUsers,
 }) => {
   const [minAge, setMinAge] = useState(18);
   const [maxAge, setMaxAge] = useState(99);
@@ -90,15 +91,19 @@ const UsersList = ({
     ) : (
       <>
         {" "}
-        {users.map((user) => (
-          <Col key={user.id} sm={6} md={3} lg={2}>
-            <UserListCard
-              handleLike={(recipient) => handleLike(recipient)}
-              user={user}
-              history={history}
-            />
-          </Col>
-        ))}{" "}
+        {users.map((user) => {
+          const online = onlineUsers.find((x) => x.userId === user.id);
+          return (
+            <Col key={user.id} sm={6} md={3} lg={2}>
+              <UserListCard
+                handleLike={(recipient) => handleLike(recipient)}
+                user={user}
+                history={history}
+                userOnline={online ? true : false}
+              />
+            </Col>
+          );
+        })}{" "}
       </>
     );
   };
@@ -131,6 +136,12 @@ const UsersList = ({
 };
 
 UsersList.propTypes = {
+  onlineUsers: PropTypes.arrayOf(
+    PropTypes.shape({
+      userId: PropTypes.number,
+      connectionId: PropTypes.string,
+    })
+  ),
   users: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.number,
@@ -150,12 +161,15 @@ UsersList.propTypes = {
   }).isRequired,
 };
 
-const mapStateToProps = (state) => ({
-  userId: state.authentication.user.id,
-  users: state.users.usersList,
-  loading: state.loading.loading,
-  paginationProps: state.users.paginationProps,
-});
+const mapStateToProps = (state) => {
+  return {
+    userId: state.authentication.user.id,
+    users: state.users.usersList,
+    loading: state.loading.loading,
+    paginationProps: state.users.paginationProps,
+    onlineUsers: state.users.onlineUsers,
+  };
+};
 
 const mapDispatchToProps = (dispatch) => {
   return {

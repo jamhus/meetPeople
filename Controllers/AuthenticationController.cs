@@ -80,7 +80,7 @@ namespace meetPeople.Controllers
 
             var token = tokenHandler.CreateToken(tokenDescriptor);
 
-            return Ok(new {token = tokenHandler.WriteToken(token)});
+            return Ok(new {token = tokenHandler.WriteToken(token),userId = userFromRepo.Id});
 
         }
     }

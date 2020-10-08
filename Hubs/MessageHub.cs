@@ -26,6 +26,8 @@ namespace meetPeople.Hubs
          public void SendUserList() {
             Clients.All.SendAsync("SendUserList",Users);
         }
+
+
     
         public Task SayImLogedIn(int userId) {
             var user = Users.Where(x=>x.UserId == userId).FirstOrDefault();
@@ -42,16 +44,20 @@ namespace meetPeople.Hubs
 
 
         public override async Task OnConnectedAsync(){
+            await Clients.All.SendAsync("UserConnected",Context.ConnectionId);
             SendUserList();
             await base.OnConnectedAsync();
         }
 
         public override async Task OnDisconnectedAsync(Exception ex){
+            await Clients.All.SendAsync("UserDisConnected",Context.ConnectionId);
             var Index = Users.FindIndex(x=>x.ConnectionId == Context.ConnectionId);
+       
+            
             if (Index!=-1) {
                 Users.RemoveAt(Index);
             }
-            SendUserList();
+             SendUserList();
             await base.OnDisconnectedAsync(ex);
         }
         

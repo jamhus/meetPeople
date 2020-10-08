@@ -1,7 +1,9 @@
 import { USERS_CONSTANTS } from "../../actions";
+import { SIGNALR_CONSTANTS } from "../../middlewares/signalRMiddleware";
 
 const defaultState = {
   usersList: [],
+  onlineUsers: [],
   userDetailed: {},
   paginationProps: {
     totalPages: 0,
@@ -27,6 +29,11 @@ const Users = (state = defaultState, action) => {
       return {
         ...state,
         userDetailed: {},
+      };
+    case SIGNALR_CONSTANTS.SEND_USER_LIST:
+      return {
+        ...state,
+        onlineUsers: [...action.onlineUsers],
       };
     default:
       return state;

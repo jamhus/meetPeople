@@ -2,7 +2,12 @@ import React from "react";
 import PropTypes from "prop-types";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUser, faHeart, faEnvelope } from "@fortawesome/free-solid-svg-icons";
+import {
+  faUser,
+  faHeart,
+  faEnvelope,
+  faCircle,
+} from "@fortawesome/free-solid-svg-icons";
 import {
   Card,
   Button,
@@ -14,11 +19,16 @@ import {
 
 import "./UserListCard.css";
 
-export const UserListCard = ({ user, history, handleLike }) => {
+export const UserListCard = ({ user, history, handleLike, userOnline }) => {
   const goToDetailed = () => history.push(`/user/${user.id}`);
 
   return (
     <Card className="mb-4">
+      {userOnline && (
+        <span className="user-list-online text-success">
+          <FontAwesomeIcon icon={faCircle} />{" "}
+        </span>
+      )}
       <div className="card-img-wrapper">
         <CardImg className="list-card" src={user.photoUrl} />
         <ul className="list-inline member-icons animate text-center">
@@ -60,4 +70,5 @@ UserListCard.propTypes = {
     photoUrl: PropTypes.string,
   }).isRequired,
   history: PropTypes.any.isRequired,
+  userOnline: PropTypes.bool.isRequired,
 };

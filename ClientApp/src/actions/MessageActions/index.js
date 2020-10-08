@@ -124,6 +124,7 @@ export const sendMessage = (userId, message) => async (dispatch) => {
     body: JSON.stringify({
       recipientId: message.recipientId,
       content: message.content,
+      connectionId: message.connectionId,
     }),
     redirect: "follow",
   };

@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import * as SignalR from "@microsoft/signalr";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import moment from "moment";
@@ -21,6 +20,9 @@ import {
   ButtonGroup,
 } from "reactstrap";
 
+import { faCircle } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
 import { PictureGallery } from "../../common/PictureGallery";
 
 import {
@@ -29,7 +31,6 @@ import {
   sendLike,
   getMessageThread,
   clearThread,
-  fetchRecieveMessage,
 } from "../../../actions";
 import "./UserDetailed.css";
 import Conversation from "../../common/Conversation";
@@ -44,12 +45,9 @@ const UserDetailed = ({
   match,
   getMessageThread,
   clearThread,
-  fetchRecieveMessage,
+  userOnline,
 }) => {
   const [activeTab, setActiveTab] = useState("1");
-  const [hubConnection, setHubConnection] = useState({});
-  const [onlineUsers, setOnlineUsers] = useState([]);
-  const [online, setOnline] = useState(false);
 
   const toggle = (tab) => {
     if (activeTab !== tab) setActiveTab(tab);
@@ -63,65 +61,14 @@ const UserDetailed = ({
     return sendLike(userId, recipient);
   };
 
-  const sendMessageInRealTime = (message) => {
-    const userConnected = onlineUsers.find((x) => x.userId === user.id);
-    userConnected &&
-      hubConnection.invoke(
-        "SendMessageToUser",
-        userConnected.connectionId,
-        message
-      );
-  };
-  useEffect(() => {
-    return () => {
-      console.log("bye");
-      setHubConnection(null);
-    };
-  }, []);
-
   useEffect(() => {
     getUser(match.params.id);
     getMessageThread(userId, match.params.id);
 
-    const createHubConnection = async () => {
-      // Build new Hub Connection, url is currently hard coded.
-      const hubConnect = new SignalR.HubConnectionBuilder()
-        .withUrl("/chat")
-        .build();
-
-      if (!online) {
-        try {
-          await hubConnect.start();
-          setHubConnection(hubConnect);
-          setOnline(true);
-        } catch (err) {
-          alert(err);
-        }
-      }
-    };
-
-    if (hubConnection && online) {
-      hubConnection.invoke("SayImLogedIn", userId);
-
-      hubConnection.on("SendUserList", (users) => {
-        setOnlineUsers(users);
-      });
-
-      hubConnection.on("SendMessageToUser", (message) => {
-        fetchRecieveMessage(message);
-      });
-      hubConnection.on("UserDisConnected", (connectionId) => {
-        console.log("UserDisConnected", connectionId);
-      });
-    }
-
-    createHubConnection();
-
     if (match.params.tab) {
       setActiveTab(match.params.tab);
     }
-
-    return () => {
+    return function cleanup() {
       clearUser();
       clearThread();
     };
@@ -133,9 +80,6 @@ const UserDetailed = ({
     clearUser,
     match.params.id,
     match.params.tab,
-    online,
-    setOnline,
-    fetchRecieveMessage,
   ]);
 
   const infoLabel = (header, text) => (
@@ -147,7 +91,6 @@ const UserDetailed = ({
 
   const renderUserProfile = () => {
     const photos = user && user.photos ? user.photos : [];
-
     return loading ? (
       <Col xs="12" md={{ size: 6, offset: 6 }}>
         {" "}
@@ -169,6 +112,11 @@ const UserDetailed = ({
               src={user.photoUrl}
             />
             <CardBody className="card-body-alt">
+              {userOnline && (
+                <span className="user-detailed-online text-success">
+                  <FontAwesomeIcon icon={faCircle} />{" "}
+                </span>
+              )}
               {infoLabel("Location:", `${user.city} , ${user.country}`)}
               {infoLabel("Age:", `${user.age}`)}
               {infoLabel(
@@ -272,7 +220,6 @@ const UserDetailed = ({
                       <Conversation
                         userId={userId}
                         recipientId={match.params.id}
-                        sendMessageInRealTime={sendMessageInRealTime}
                       />
                     </Col>
                   </Row>
@@ -323,7 +270,7 @@ UserDetailed.propTypes = {
   clearUser: PropTypes.func.isRequired,
   clearThread: PropTypes.func.isRequired,
   getMessageThread: PropTypes.func.isRequired,
-  fetchRecieveMessage: PropTypes.func.isRequired,
+  userOnline: PropTypes.bool.isRequired,
   match: PropTypes.shape({
     params: PropTypes.shape({
       id: PropTypes.string.isRequired,
@@ -331,18 +278,23 @@ UserDetailed.propTypes = {
   }),
 };
 
-const mapStateToProps = (state) => ({
-  user: state.users.userDetailed,
-  loading: state.loading.loading,
-  userId: state.authentication.user.id,
-});
+const mapStateToProps = (state) => {
+  const online = state.users.onlineUsers.find(
+    (x) => x.userId === state.users.userDetailed.id
+  );
+  return {
+    user: state.users.userDetailed,
+    loading: state.loading.loading,
+    userId: state.authentication.user.id,
+    userOnline: online ? true : false,
+  };
+};
 
 const mapDispatchToProps = (dispatch) => ({
   getUser: (id) => dispatch(getUser(id)),
   clearUser: () => dispatch(clearUser()),
   clearThread: () => dispatch(clearThread()),
   sendLike: (userId, recipient) => dispatch(sendLike(userId, recipient)),
-  fetchRecieveMessage: (message) => dispatch(fetchRecieveMessage(message)),
   getMessageThread: (userId, recipientId) =>
     dispatch(getMessageThread(userId, recipientId)),
 });
