@@ -35,12 +35,7 @@ export const FilteringBar = ({
 
   const renderOrder = () => {
     return (
-      <Dropdown
-        className=" w-100"
-        size="sm"
-        isOpen={orderDropdownOpen}
-        toggle={toggleOrder}
-      >
+      <Dropdown size="sm" isOpen={orderDropdownOpen} toggle={toggleOrder}>
         <DropdownToggle
           className="btn-primary filter-label"
           caret
@@ -104,7 +99,7 @@ export const FilteringBar = ({
   const renderAge = () => {
     return (
       <div className="form-inline">
-        <div className="d-flex w-50">
+        <div className="d-flex w-50 justify-content-center">
           <label className="pr-1" htmlFor="minAge">
             Min age
           </label>
@@ -116,7 +111,7 @@ export const FilteringBar = ({
             onChange={(e) => setMinAge(e.target.value)}
           />
         </div>
-        <div className="d-flex w-50">
+        <div className="d-flex w-50 justify-content-center">
           <label className="px-1" htmlFor="maxAge">
             Max age
           </label>
@@ -134,17 +129,27 @@ export const FilteringBar = ({
 
   return (
     <Row className="filtering-bar-wrapper">
-      <Col className="mb-2" sm={6} md={2}>
+      <Col
+        className="mb-2 w-50 d-flex justify-content-center"
+        sm={6}
+        lg={2}
+        md={6}
+      >
         {renderGender()}
       </Col>
 
-      <Col className="mb-2" sm={6} md={2}>
+      <Col
+        className="mb-2 w-50 d-flex justify-content-center"
+        sm={6}
+        lg={2}
+        md={6}
+      >
         {renderOrder()}
       </Col>
-      <Col className="mb-2" sm={12} md={4}>
+      <Col className="mb-2" sm={12} lg={4} md={12}>
         {renderAge()}
       </Col>
-      <Col className="mb-2" sm={12} md={4}>
+      <Col className="mb-2" sm={12} lg={4} md={12}>
         {renderLikeFilters()}
       </Col>
     </Row>

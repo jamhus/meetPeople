@@ -20,8 +20,12 @@ import {
   ButtonGroup,
 } from "reactstrap";
 
-import { faCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faCircle,
+  faThumbsUp,
+  faEnvelope,
+} from "@fortawesome/free-solid-svg-icons";
 
 import { PictureGallery } from "../../common/PictureGallery";
 
@@ -132,14 +136,14 @@ const UserDetailed = ({
             </CardBody>
             <CardFooter>
               <ButtonGroup className="d-flex">
-                <Button onClick={handleLike} className="w-100 btn-primary">
-                  Like
+                <Button onClick={handleLike} className="w-100 btn-danger">
+                  <FontAwesomeIcon icon={faThumbsUp} />{" "}
                 </Button>
                 <Button
                   onClick={(e) => toggle("4")}
                   className="w-100 btn-success"
                 >
-                  Message
+                  <FontAwesomeIcon icon={faEnvelope} />{" "}
                 </Button>
               </ButtonGroup>
             </CardFooter>

@@ -15,6 +15,7 @@ import {
   CardText,
   CardBody,
   CardTitle,
+  ButtonGroup,
 } from "reactstrap";
 
 import "./UserListCard.css";
@@ -32,25 +33,30 @@ export const UserListCard = ({ user, history, handleLike, userOnline }) => {
       )}
       <div className="card-img-wrapper">
         <CardImg className="list-card" src={user.photoUrl || basePhoto} />
-        <ul className="list-inline member-icons animate text-center">
-          <li className="list-inline-item">
-            <Button className="btn btn-primary" onClick={goToDetailed}>
+        <div className="member-icons animate text-center">
+          <ButtonGroup className="d-flex">
+            <Button className="btn w-100 btn-primary" onClick={goToDetailed}>
               {" "}
               <FontAwesomeIcon icon={faUser} />
             </Button>
+
             <Button
-              className="btn mx-2 btn-primary"
+              className="btn w-100 btn-primary"
               onClick={() => handleLike({ id: user.id, name: user.knownAs })}
             >
               {" "}
               <FontAwesomeIcon icon={faHeart} />
             </Button>
-            <Button className="btn btn-primary">
+
+            <Button className="btn w-100 btn-primary">
               {" "}
-              <FontAwesomeIcon icon={faEnvelope} />
+              <FontAwesomeIcon
+                onClick={() => history.push(`/user/${user.id}/4`)}
+                icon={faEnvelope}
+              />
             </Button>
-          </li>
-        </ul>
+          </ButtonGroup>
+        </div>
       </div>
       <CardBody className="text-center p-1">
         <CardTitle className="mb-1">
