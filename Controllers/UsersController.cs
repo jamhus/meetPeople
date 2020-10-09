@@ -6,10 +6,12 @@ using System.Threading.Tasks;
 using AutoMapper;
 using meetPeople.Dtos;
 using meetPeople.Helpers;
+using meetPeople.Hubs;
 using meetPeople.Interfaces;
 using meetPeople.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 //using meetPeople.Models;
 
 namespace meetPeople.Controllers
@@ -22,14 +24,16 @@ namespace meetPeople.Controllers
     {
         private readonly IMeetPeopleRepository _repo;
         private readonly IMapper _mapper;
-        public UsersController(IMeetPeopleRepository repo, IMapper mapper)
+        private readonly IHubContext<MessageHub> _hub;
+        public UsersController(IMeetPeopleRepository repo, IMapper mapper, IHubContext<MessageHub> hub)
         {
+            _hub = hub;
             _mapper = mapper;
             _repo = repo;
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetUsers([FromQuery]UserParams userParams)
+        public async Task<IActionResult> GetUsers([FromQuery] UserParams userParams)
         {
 
             var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
@@ -37,17 +41,18 @@ namespace meetPeople.Controllers
             var userFromRepo = await _repo.GetUser(userId);
 
             userParams.UserId = userId;
-             
-            if(string.IsNullOrEmpty(userParams.Gender)){
+
+            if (string.IsNullOrEmpty(userParams.Gender))
+            {
                 userParams.Gender = userFromRepo.Gender == "male" ? "female" : "male";
             }
-            
+
             var users = await _repo.GetUsers(userParams);
 
             var usersToReturn = _mapper.Map<IEnumerable<UserForListDto>>(users);
 
-            Response.AddPagination(users.CurrentPage,users.PageSize,users.TotalCount,users.TotalPages);
-            
+            Response.AddPagination(users.CurrentPage, users.PageSize, users.TotalCount, users.TotalPages);
+
             return Ok(usersToReturn);
         }
 
@@ -60,54 +65,65 @@ namespace meetPeople.Controllers
             return Ok(userToReturn);
         }
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateUser(int id,UserforUpdateDto userforUpdate)
+        public async Task<IActionResult> UpdateUser(int id, UserforUpdateDto userforUpdate)
         {
-            if(id!= int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value)){
+            if (id != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+            {
                 return Unauthorized();
             }
 
             var userFromRepo = await _repo.GetUser(id);
 
-            _mapper.Map(userforUpdate,userFromRepo); 
+            _mapper.Map(userforUpdate, userFromRepo);
 
-            if(await _repo.SaveAll()) {
-                 return NoContent();
+            if (await _repo.SaveAll())
+            {
+                return NoContent();
             }
 
             throw new Exception($"Updating user {id} failed on save");
         }
 
-        [HttpPost("{id}/like/{recipientId}")]
+        [HttpPost("{id}/like/{recipientId}/{connectionId}")]
+        public async Task<IActionResult> LikeUser(int id, int recipientId, string connectionId)
+        {
 
-        public async Task<IActionResult> LikeUser (int id,int recipientId) {
-
-            if(id!= int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value)){
+            if (id != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+            {
                 return Unauthorized();
             }
 
-            var like = await _repo.GetLike(id,recipientId);
+            var like = await _repo.GetLike(id, recipientId);
 
-            if (like != null) {
+            if (like != null)
+            {
                 return BadRequest("You already like this user");
             }
 
-            if (await _repo.GetUser(recipientId) == null) {
+            if (await _repo.GetUser(recipientId) == null)
+            {
                 return NotFound();
             }
 
-            like = new Like 
+            like = new Like
             {
                 LikerId = id,
                 LikeeId = recipientId
             };
-            
+
             _repo.Add<Like>(like);
 
-            if(await _repo.SaveAll()) {
+            var user = await _repo.GetUser(id);
+
+            if (await _repo.SaveAll())
+            {
+                if(connectionId!="none"){
+                    await _hub.Clients.Client(connectionId).SendAsync("UserLiked",user.KnownAs);
+                }
                 return Ok();
             }
             return BadRequest("Failed to like user");
-             
+
         }
     }
 }

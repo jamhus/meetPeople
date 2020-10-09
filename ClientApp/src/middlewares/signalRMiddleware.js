@@ -5,7 +5,13 @@ import {
   LogLevel,
 } from "@microsoft/signalr";
 
-import { AUTHENICATION_CONSTANTS, MESSAGE_CONSTANTS } from "../actions";
+import {
+  AUTHENICATION_CONSTANTS,
+  MESSAGE_CONSTANTS,
+  TOASTER_TYPE_CONSTANTS,
+  openToaster,
+  closeToaster,
+} from "../actions";
 
 export const SIGNALR_CONSTANTS = {
   SEND_USER_LIST: "SEND_USER_LIST",
@@ -56,6 +62,19 @@ const signalRMiddleware = ({ dispatch }) => (next) => async (action) => {
         type: MESSAGE_CONSTANTS.RECIEVE_MESSAGE,
         message,
       });
+    });
+
+    connection.on("UserLiked", (user) => {
+      dispatch(
+        openToaster(
+          "Like!",
+          `${user} liked you!`,
+          TOASTER_TYPE_CONSTANTS.SUCCESS
+        )
+      );
+      setTimeout(() => {
+        dispatch(closeToaster());
+      }, 5000);
     });
 
     // re-establish the connection if connection dropped

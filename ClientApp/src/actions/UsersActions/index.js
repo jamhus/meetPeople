@@ -241,10 +241,19 @@ export const setMain = (userId, id) => async (dispatch) => {
   dispatch(toggleLoading(false));
 };
 
-export const sendLike = (userId, recipient) => async (dispatch) => {
+export const sendLike = (userId, recipient) => async (dispatch, getState) => {
   var myHeaders = new Headers();
   const token = JSON.parse(Cookies.get("token"))["token"];
   myHeaders.append("Authorization", `Bearer ${token}`);
+
+  const state = getState();
+
+  const checkForConnectionId = () => {
+    const user = state.users.onlineUsers.find((x) => x.userId === recipient.id);
+    return user ? user.connectionId : "none";
+  };
+
+  const connectionId = checkForConnectionId();
 
   var requestOptions = {
     method: "Post",
@@ -256,7 +265,7 @@ export const sendLike = (userId, recipient) => async (dispatch) => {
     dispatch(toggleLoading(true));
 
     await fetch(
-      `/api/users/${userId}/like/${recipient.id}`,
+      `/api/users/${userId}/like/${recipient.id}/${connectionId}`,
       requestOptions
     ).then((res) => {
       if (res.status === 400) {

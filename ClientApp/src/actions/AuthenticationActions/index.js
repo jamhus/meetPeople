@@ -33,9 +33,9 @@ export const getCurrentUser = (id) => async (dispatch) => {
 };
 
 export const handleLogin = (username, password) => async (dispatch) => {
-  dispatch(toggleLoading(true));
-
   try {
+    dispatch(toggleLoading(true));
+
     await fetch("/api/authentication/login", {
       method: "POST",
       headers: {

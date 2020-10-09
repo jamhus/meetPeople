@@ -18,7 +18,6 @@ const toaster = (state = defaultState, action) => {
     case TOASTER_CONSTANTS.CLOSE:
       return {
         ...state,
-        type: "",
         isOpen: false,
         bodyMessage: "",
         headerMessage: "",
