@@ -13,20 +13,20 @@ import {
 } from "reactstrap";
 import Cookies from "js-cookie";
 
-import { setLogout } from "../../actions/AuthenticationActions";
+import { handleLogout } from "../../actions/AuthenticationActions";
 import basePhoto from "../../assets/user.png";
 import "./NavMenu.css";
 
-const NavMenu = ({ isLoggedIn, setLogout, photoUrl }) => {
+const NavMenu = ({ isLoggedIn, handleLogout, photoUrl }) => {
   const [collapsed, setCollapsed] = useState(true);
 
   const toggleNavbar = () => {
     setCollapsed(!collapsed);
   };
 
-  const handleLogout = () => {
+  const logout = () => {
     Cookies.remove("token");
-    setLogout();
+    handleLogout();
   };
 
   return (
@@ -113,7 +113,7 @@ const NavMenu = ({ isLoggedIn, setLogout, photoUrl }) => {
                   <NavLink
                     tag={RouterNavLink}
                     className="text-dark"
-                    onClick={handleLogout}
+                    onClick={logout}
                     to="/"
                   >
                     Logout
@@ -130,7 +130,7 @@ const NavMenu = ({ isLoggedIn, setLogout, photoUrl }) => {
 
 NavMenu.propTypes = {
   isLoggedIn: PropTypes.bool.isRequired,
-  setLogout: PropTypes.func.isRequired,
+  handleLogout: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = ({ authentication }) => {
@@ -143,7 +143,7 @@ const mapStateToProps = ({ authentication }) => {
 };
 
 const mapDispatchToProps = (dispatch) => ({
-  setLogout: () => dispatch(setLogout()),
+  handleLogout: () => dispatch(handleLogout()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(NavMenu);

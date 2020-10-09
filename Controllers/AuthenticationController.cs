@@ -4,10 +4,12 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using meetPeople.Dtos;
+using meetPeople.Hubs;
 using meetPeople.Interfaces;
 using meetPeople.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
@@ -20,14 +22,16 @@ namespace meetPeople.Controllers
     {
         private readonly IAuthRepository _authRepo;
         private readonly IConfiguration _config;
-        public AuthenticationController(IAuthRepository authRepo, IConfiguration config)
+        private readonly IHubContext<MessageHub> _hubContext;
+        public AuthenticationController(IAuthRepository authRepo, IConfiguration config, IHubContext<MessageHub> hubContext)
         {
+            _hubContext = hubContext;
             _config = config;
             _authRepo = authRepo;
         }
 
         [AllowAnonymous]
-        [HttpPost("register")]  
+        [HttpPost("register")]
         public async Task<IActionResult> Register(UserForRegisterDto userForRegisterDto)
         {
             userForRegisterDto.Username = userForRegisterDto.Username.ToLower();
@@ -50,10 +54,10 @@ namespace meetPeople.Controllers
 
             var createdUser = await _authRepo.Register(user, userForRegisterDto.Password);
 
-            return StatusCode(201); //temporary solution
+            return StatusCode(201); 
 
         }
-        
+
         [AllowAnonymous]
         [HttpPost("login")]
         public async Task<IActionResult> Login(UserForLoginDto userForLoginDto)
@@ -68,10 +72,10 @@ namespace meetPeople.Controllers
                 new Claim(ClaimTypes.Name , userFromRepo.Username.ToString())
             };
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config.GetSection("AppSettings:Token").Value)); 
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config.GetSection("AppSettings:Token").Value));
 
             // use the key as part of the signing credentials increpted
-            var creds = new SigningCredentials(key,SecurityAlgorithms.HmacSha512Signature);
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
 
             // token descriptor that hold the claims and other values that can be provided in the token
             var tokenDescriptor = new SecurityTokenDescriptor
@@ -85,7 +89,16 @@ namespace meetPeople.Controllers
 
             var token = tokenHandler.CreateToken(tokenDescriptor);
 
-            return Ok(new {token = tokenHandler.WriteToken(token),userId = userFromRepo.Id});
+            return Ok(new { token = tokenHandler.WriteToken(token), userId = userFromRepo.Id });
+
+        }
+
+        [AllowAnonymous]
+        [HttpGet("logout/{connectionId}")]
+        public async Task<IActionResult> Logout(string connectionId)
+        {
+            await _hubContext.Clients.All.SendAsync("UserOffline",connectionId);
+            return Ok();
 
         }
     }

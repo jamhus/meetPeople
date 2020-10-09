@@ -32,6 +32,28 @@ export const getCurrentUser = (id) => async (dispatch) => {
   return user;
 };
 
+export const handleLogout = () => async (dispatch, getState) => {
+  dispatch(toggleLoading(true));
+
+  const store = getState();
+  const currentUserId = store.authentication.user.id;
+  const connectionId = store.users.onlineUsers.find(
+    (x) => x.userId === currentUserId
+  ).connectionId;
+
+  var requestOptions = {
+    method: "GET",
+    redirect: "follow",
+  };
+  try {
+    await fetch(`/api/authentication/logout/${connectionId}`, requestOptions);
+  } catch (error) {
+    console.log(error);
+  }
+  dispatch(setLogout());
+  dispatch(toggleLoading(false));
+};
+
 export const handleLogin = (username, password) => async (dispatch) => {
   try {
     dispatch(toggleLoading(true));

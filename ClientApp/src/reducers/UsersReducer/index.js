@@ -35,6 +35,15 @@ const Users = (state = defaultState, action) => {
         ...state,
         onlineUsers: [...action.onlineUsers],
       };
+
+    case SIGNALR_CONSTANTS.USER_LOG_OUT:
+      const list = state.onlineUsers.filter(
+        (x) => x.connectionId !== action.connectionId
+      );
+      return {
+        ...state,
+        onlineUsers: [...list],
+      };
     default:
       return state;
   }

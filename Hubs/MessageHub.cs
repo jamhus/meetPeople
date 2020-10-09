@@ -20,9 +20,12 @@ namespace meetPeople.Hubs
         public Task SendMessageToUser(string connectionId , object message) {
             return Clients.Client(connectionId).SendAsync("SendMessageToUser",message);
         }
-        
-        public void SendUserList() {
-            Clients.All.SendAsync("SendUserList",Users);
+
+        public void SendUserList(string dicsonnectedId ="") {
+            if(dicsonnectedId==""){
+              Clients.All.SendAsync("SendUserList",Users);
+            }
+            Clients.AllExcept(dicsonnectedId).SendAsync("SendUserList",Users);
         }
         public Task SayImLogedIn(int userId) {
             var user = Users.Where(x=>x.UserId == userId).FirstOrDefault();
@@ -33,12 +36,18 @@ namespace meetPeople.Hubs
                 UserId = userId,
                 ConnectionId = Context.ConnectionId
             });
-            SendUserList();
+            SendUserList("");
+            return Task.CompletedTask;
+        }
+        public Task SayImLogedOut(string connectionId) {
+            var user = Users.Where(x=>x.ConnectionId == connectionId).FirstOrDefault();
+            Users.Remove(user);
+            SendUserList(connectionId);
             return Task.CompletedTask;
         }
         public override async Task OnConnectedAsync(){
             await Clients.All.SendAsync("UserConnected",Context.ConnectionId);
-            SendUserList();
+            SendUserList("");
             await base.OnConnectedAsync();
         }
         public override async Task OnDisconnectedAsync(Exception ex){
@@ -49,7 +58,7 @@ namespace meetPeople.Hubs
                 Users.RemoveAt(Index);
             }
             
-            SendUserList();
+            SendUserList("");
 
             await Clients.All.SendAsync("UserDisConnected",Context.ConnectionId);
 
