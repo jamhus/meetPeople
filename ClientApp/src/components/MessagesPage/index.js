@@ -204,6 +204,7 @@ Messages.propTypes = {
       isRead: PropTypes.bool,
       dateRead: PropTypes.string,
       dateSent: PropTypes.string,
+      container: PropTypes.string,
     })
   ).isRequired,
 

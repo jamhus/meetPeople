@@ -2,6 +2,7 @@ import { MESSAGE_CONSTANTS, USERS_CONSTANTS } from "../../actions";
 
 const defaultState = {
   currentMessageThread: "",
+  currentContainer: "Inbox",
   messagesContainer: [],
   messageThread: [],
   paginationProps: {
@@ -17,6 +18,7 @@ const Messages = (state = defaultState, action) => {
     case MESSAGE_CONSTANTS.GET_MESSAGES:
       return {
         ...state,
+        currentContainer: action.container,
         messagesContainer: [...action.messages.items],
         paginationProps: {
           ...action.messages.paginationProps,
@@ -48,6 +50,15 @@ const Messages = (state = defaultState, action) => {
         return {
           ...state,
           messageThread: [action.message, ...state.messageThread],
+        };
+      }
+      if (
+        state.currentContainer === "Inbox" ||
+        state.currentContainer === "Unread"
+      ) {
+        return {
+          ...state,
+          messagesContainer: [action.message, ...state.messagesContainer],
         };
       }
       return {

@@ -31,9 +31,10 @@ export const fetchDeleteMessage = (messageId) => ({
   messageId,
 });
 
-export const fetctGetMessages = (messages) => ({
+export const fetctGetMessages = (messages, container) => ({
   type: MESSAGE_CONSTANTS.GET_MESSAGES,
   messages,
+  container,
 });
 
 export const clearMessages = () => ({
@@ -101,7 +102,7 @@ export const getMessages = (userId, container, pageNumber, pageSize) => async (
       items: [...data],
       paginationProps,
     };
-    dispatch(fetctGetMessages(usersResult));
+    dispatch(fetctGetMessages(usersResult, container));
   } catch (error) {
     console.log(error);
   }
