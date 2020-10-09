@@ -18,6 +18,7 @@ import {
 } from "reactstrap";
 
 import "./UserListCard.css";
+import basePhoto from "../../../assets/user.png";
 
 export const UserListCard = ({ user, history, handleLike, userOnline }) => {
   const goToDetailed = () => history.push(`/user/${user.id}`);
@@ -30,7 +31,7 @@ export const UserListCard = ({ user, history, handleLike, userOnline }) => {
         </span>
       )}
       <div className="card-img-wrapper">
-        <CardImg className="list-card" src={user.photoUrl} />
+        <CardImg className="list-card" src={user.photoUrl || basePhoto} />
         <ul className="list-inline member-icons animate text-center">
           <li className="list-inline-item">
             <Button className="btn btn-primary" onClick={goToDetailed}>

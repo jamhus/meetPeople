@@ -20,6 +20,7 @@ import {
   ButtonGroup,
 } from "reactstrap";
 import { DropZone } from "../common/DropZone";
+import basePhoto from "../../assets/user.png";
 import PhotoEditor from "../common/PhotoEditor";
 
 import { getUser, updateUser, clearUser, uploadPhoto } from "../../actions";
@@ -107,14 +108,16 @@ const EditProfilePage = ({
   };
 
   const renderUserProfile = () => {
-    const photoUrl = user.photos.find((x) => x.isMain === true).url || "";
+    const photoUrl = user.photos.find((x) => x.isMain === true)
+      ? user.photos.find((x) => x.isMain === true).url
+      : "";
     return (
       <>
         <Col sm={4}>
           <Card>
             <CardImg
               className="detailed-img card-img-top img-thumbnail"
-              src={photoUrl}
+              src={photoUrl || basePhoto}
             />
             <CardBody className="card-body-alt">
               {infoLabel("Location:", `${city} , ${country}`)}

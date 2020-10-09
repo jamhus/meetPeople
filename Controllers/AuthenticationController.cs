@@ -30,7 +30,6 @@ namespace meetPeople.Controllers
         [HttpPost("register")]  
         public async Task<IActionResult> Register(UserForRegisterDto userForRegisterDto)
         {
-
             userForRegisterDto.Username = userForRegisterDto.Username.ToLower();
 
             if (await _authRepo.UserExists(userForRegisterDto.Username))
@@ -40,7 +39,13 @@ namespace meetPeople.Controllers
 
             var user = new User
             {
-                Username = userForRegisterDto.Username
+                Username = userForRegisterDto.Username,
+                Created = DateTime.Now,
+                City = userForRegisterDto.City,
+                KnownAs = userForRegisterDto.Username,
+                Country = userForRegisterDto.Country,
+                Gender = userForRegisterDto.Gender,
+                DateOfBirth = userForRegisterDto.DateOfBirth
             };
 
             var createdUser = await _authRepo.Register(user, userForRegisterDto.Password);

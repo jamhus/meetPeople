@@ -86,7 +86,14 @@ export const handleLogin = (username, password) => async (dispatch) => {
   dispatch(toggleLoading(false));
 };
 
-export const handleRegister = (username, password) => async (dispatch) => {
+export const handleRegister = (
+  username,
+  password,
+  city,
+  country,
+  dateOfBirth,
+  gender
+) => async (dispatch) => {
   dispatch(toggleLoading(true));
 
   let status;
@@ -98,8 +105,12 @@ export const handleRegister = (username, password) => async (dispatch) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        username: username,
-        password: password,
+        username,
+        password,
+        city,
+        country,
+        dateOfBirth,
+        gender,
       }),
     }).then((res) => {
       status = res.status;

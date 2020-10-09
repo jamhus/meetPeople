@@ -14,23 +14,42 @@ import {
   NavLink,
   FormGroup,
 } from "reactstrap";
+import DatePicker from "reactstrap-date-picker";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
 
 const RegisterPage = ({ handleRegister, loading }) => {
+  const [city, setCity] = useState("");
+  const [male, setMale] = useState(false);
+  const [country, setCountry] = useState("");
+  const [female, setFemale] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [registered, setRegistered] = useState(false);
+  const [dateOfBirth, setDateOfBirth] = useState("");
 
   const handleSubmit = async () => {
-    const status = await handleRegister(username, password);
+    const gender = male ? "male" : "female";
+    const status = await handleRegister(
+      username,
+      password,
+      city,
+      country,
+      dateOfBirth,
+      gender
+    );
 
     if (status === 201) {
       setRegistered(true);
     }
+    setCity("");
+    setFemale("");
+    setCountry("");
+    setMale(false);
     setUsername("");
     setPassword("");
+    setDateOfBirth("");
   };
 
   const renderRegistered = () => {
@@ -76,6 +95,61 @@ const RegisterPage = ({ handleRegister, loading }) => {
               />
             </FormGroup>
             <FormGroup>
+              <Label>Date of birth: </Label>
+              <DatePicker
+                id="birthday"
+                value={dateOfBirth}
+                onChange={(v, f) => setDateOfBirth(v)}
+              />
+            </FormGroup>
+
+            <FormGroup>
+              <Label>City: </Label>
+              <Input
+                placeholder="city"
+                value={city}
+                autoComplete="off"
+                onChange={(e) => setCity(e.target.value)}
+              />
+            </FormGroup>
+            <FormGroup>
+              <Label>Country: </Label>
+              <Input
+                placeholder="country"
+                value={country}
+                autoComplete="off"
+                onChange={(e) => setCountry(e.target.value)}
+              />
+            </FormGroup>
+            <FormGroup>
+              <Label>Gender: </Label>
+
+              <div className="d-inline ml-2">
+                <Label className="mr-4">Male: </Label>
+
+                <Input
+                  type="radio"
+                  checked={male}
+                  onChange={(e) => {
+                    setMale(true);
+                    setFemale(false);
+                  }}
+                />
+              </div>
+              <div className="d-inline ml-2">
+                <Label className="mr-4">Female: </Label>
+
+                <Input
+                  type="radio"
+                  checked={female}
+                  onChange={(e) => {
+                    setMale(false);
+                    setFemale(true);
+                  }}
+                />
+              </div>
+            </FormGroup>
+            <FormGroup>
               <Button
                 className="btn btn-primary btn-block"
                 xs={12}
@@ -107,7 +181,9 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  handleRegister: (username, password) =>
-    dispatch(handleRegister(username, password)),
+  handleRegister: (username, password, city, country, dateOfBirth, gender) =>
+    dispatch(
+      handleRegister(username, password, city, country, dateOfBirth, gender)
+    ),
 });
 export default connect(mapStateToProps, mapDispatchToProps)(RegisterPage);

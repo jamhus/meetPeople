@@ -14,11 +14,11 @@ import {
 import Cookies from "js-cookie";
 
 import { setLogout } from "../../actions/AuthenticationActions";
-
+import basePhoto from "../../assets/user.png";
 import "./NavMenu.css";
 
 const NavMenu = ({ isLoggedIn, setLogout, photoUrl }) => {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(true);
 
   const toggleNavbar = () => {
     setCollapsed(!collapsed);
@@ -51,7 +51,7 @@ const NavMenu = ({ isLoggedIn, setLogout, photoUrl }) => {
                   <img
                     alt="avatar"
                     className="nav-avatar img img-thumbnail rounded-circle"
-                    src={photoUrl}
+                    src={photoUrl || basePhoto}
                   />
                 </NavItem>
               )}

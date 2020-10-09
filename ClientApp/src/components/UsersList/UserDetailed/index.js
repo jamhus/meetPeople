@@ -32,8 +32,10 @@ import {
   getMessageThread,
   clearThread,
 } from "../../../actions";
+
 import "./UserDetailed.css";
 import Conversation from "../../common/Conversation";
+import basePhoto from "../../../assets/user.png";
 
 const UserDetailed = ({
   getUser,
@@ -107,16 +109,16 @@ const UserDetailed = ({
       <>
         <Col sm={4}>
           <Card>
+            {userOnline && (
+              <span className="user-detailed-online text-success">
+                <FontAwesomeIcon icon={faCircle} />{" "}
+              </span>
+            )}
             <CardImg
               className="detailed-img card-img-top img-thumbnail"
-              src={user.photoUrl}
+              src={user.photoUrl || basePhoto}
             />
             <CardBody className="card-body-alt">
-              {userOnline && (
-                <span className="user-detailed-online text-success">
-                  <FontAwesomeIcon icon={faCircle} />{" "}
-                </span>
-              )}
               {infoLabel("Location:", `${user.city} , ${user.country}`)}
               {infoLabel("Age:", `${user.age}`)}
               {infoLabel(

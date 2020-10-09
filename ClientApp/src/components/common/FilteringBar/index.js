@@ -35,7 +35,12 @@ export const FilteringBar = ({
 
   const renderOrder = () => {
     return (
-      <Dropdown size="sm" isOpen={orderDropdownOpen} toggle={toggleOrder}>
+      <Dropdown
+        className=" w-100"
+        size="sm"
+        isOpen={orderDropdownOpen}
+        toggle={toggleOrder}
+      >
         <DropdownToggle
           className="btn-primary filter-label"
           caret
@@ -129,16 +134,17 @@ export const FilteringBar = ({
 
   return (
     <Row className="filtering-bar-wrapper">
-      <Col sm={12} md={2}>
+      <Col className="mb-2" sm={6} md={2}>
         {renderGender()}
       </Col>
-      <Col sm={12} md={4}>
-        {renderAge()}
-      </Col>
-      <Col sm={12} md={2}>
+
+      <Col className="mb-2" sm={6} md={2}>
         {renderOrder()}
       </Col>
-      <Col sm={12} md={4}>
+      <Col className="mb-2" sm={12} md={4}>
+        {renderAge()}
+      </Col>
+      <Col className="mb-2" sm={12} md={4}>
         {renderLikeFilters()}
       </Col>
     </Row>
