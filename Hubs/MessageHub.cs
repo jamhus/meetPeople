@@ -20,8 +20,8 @@ namespace meetPeople.Hubs
         public Task SendMessageToUser(string connectionId , object message) {
             return Clients.Client(connectionId).SendAsync("SendMessageToUser",message);
         }
-
-         public void SendUserList() {
+        
+        public void SendUserList() {
             Clients.All.SendAsync("SendUserList",Users);
         }
         public Task SayImLogedIn(int userId) {
@@ -42,14 +42,17 @@ namespace meetPeople.Hubs
             await base.OnConnectedAsync();
         }
         public override async Task OnDisconnectedAsync(Exception ex){
-            await Clients.All.SendAsync("UserDisConnected",Context.ConnectionId);
+            
             var Index = Users.FindIndex(x=>x.ConnectionId == Context.ConnectionId);
-       
             
             if (Index!=-1) {
                 Users.RemoveAt(Index);
             }
-             SendUserList();
+            
+            SendUserList();
+
+            await Clients.All.SendAsync("UserDisConnected",Context.ConnectionId);
+
             await base.OnDisconnectedAsync(ex);
         }
         
