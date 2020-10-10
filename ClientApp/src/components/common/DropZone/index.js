@@ -55,7 +55,7 @@ export const DropZone = ({
             <div className="dropzone-text">Drop the file here...</div>
           ) : (
             <div className="dropzone-text">
-              Drop file or click here to upload a csv file
+              Drop file or click here to upload a picture
             </div>
           )}
         </>
